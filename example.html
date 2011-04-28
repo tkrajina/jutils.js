@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+<link rel="stylesheet" href="example.css" type="text/css"> 
+
+<link rel="stylesheet" href="jutils.css" type="text/css"> 
+<script type='text/javascript' src='jutils.js'></script>
+
+<script>
+
+var init = function() {
+
+	// Init onmouse over effects for elements with class 'row'
+	dom.walk( function( element ) {
+		if( html.hasClass( element, 'row' ) ) {
+			html.addMouseOverClass( element, 'highlighted' )
+		}
+	} )
+
+	// Init menus:
+	dom.walk( function( element ) {
+		if( html.hasClass( element, 'menuItem' ) ) {
+			popup.addPopup( element )
+		}
+	} )
+
+}
+
+var onAjax = function( data ) {
+	var json = utils.parseJson( data )
+	var element = dom.byId( 'ajaxResult' )
+	element.innerHTML = 'Received from server: ' + json.message
+}
+
+</script>
+
+</head>
+<body onload="init()">
+
+<div id="disablingDiv">
+	<div id="disablingDivContent"></div>
+</div>
+
+<div class="row">Mouseover effect</div>
+<div class="row">Mouseover effect</div>
+<div class="row">Mouseover effect</div>
+<div class="row">Mouseover effect</div>
+<div class="row">Mouseover effect</div>
+
+<div class="row">
+	Click <a href="javascript:void(ajax.get('example.json', null, onAjax))">here for AJAX call</a>.
+</div>
+
+<div id="ajaxResult" class="row">
+</div>
+
+<div class="row">
+	<a href="javascript:void(utils.blockPage('Message text here'))">Block page</a>
+</div>
+
+<div class="menuItem" style="float:left;">Menu 1<div class="menuBody">Menu contents</div></div>
+<div class="menuItem" style="float:left;">Menu 2<div class="menuBody">Menu contents</div></div>
+
+<div style="clear:both;"></div>
+
+</body>
+</html>

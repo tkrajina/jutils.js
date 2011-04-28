@@ -1,0 +1,46 @@
+/* Used in utils.js */
+
+div#disablingDiv {
+	display: none;
+	background-color: black;
+	-moz-opacity: 0.6;
+	opacity:.60;
+	filter: alpha(opacity=60);
+	text-align:center;
+	color:white;
+}
+
+div#disablingDivContent {
+	display: none;
+	margin-top:50px;
+	width:100%;
+	text-align:center;
+	color: white;
+}
+
+div#disablingDivContent a { 
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border:1px solid #cccccc;
+	padding:5px 15px 5px 15px;
+	margin:2px 5px 2px 5px;
+	font-weight: bold;
+	color:#0000ff;
+}
+div#disablingDivContent a:visited { 
+	color:#0000ff; 
+}
+div#disablingDivContent a:hover {
+	color:#ff0000;
+}
+
+.menuItem {
+	position:relative;
+}
+
+.menuBody {
+	position:absolute;
+	top:0px;
+	left:0px;
+	visibility:hidden;
+}

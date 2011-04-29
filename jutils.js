@@ -333,12 +333,48 @@ html.addMouseOverClass = function( element, className ) {
 // Kad izađe -- čeka .75 sekunde da se obriše
 // Kad se otvori bilo koji meni -- ostali se zatvaraju
 
-popup.addPopup = function( element ) {
+popup.registeredMenus = {}
+popup.currentMenuId = 1
+
+/**
+ * Menu registration. Every menu must have a subelement with class="menuBody" which is a
+ * submenu to be shown.
+ */
+popup.registerMenu = function( element ) {
+	element.menuId = '' + popup.currentMenuId
+
 	utils.addListener( element, 'mouseover', popup.showMenu )
 	utils.addListener( element, 'mouseout', popup.hideMenu )
 }
 
-popup.showMenu = function( event ) {
+/** For private use */
+popup.showMenuByEvent = function( event ) {
+	popup.showMenu( event.target )
+}
+
+/** For private use */
+popup.hideMenuByEvent = function( event ) {
+	popup.hideMenu( event.target )
+}
+
+popup.hideAllMenus = function( exceptMenuId ) {
+	for( menuId in popup.registeredMenus )
+		if( ! exceptMenuId || menuId != exceptMenuId )
+			var menu = popup.registeredMenus[ menuId ]
+}
+
+/**
+ * Just shows the menu.
+ */
+popup.showMenu = function( element ) {
+
+	// 1. hide all other menus
+	popup.hideAllMenus( element.menuId )
+
+	// 2. remove evenual hiding timeout for this menu
+
+	// 3. add listeners (if they aren't already added) to menu elements
+
 	var element = event.target
 	dom.walkRecursively( element, function( subElement ) {
 		if( html.hasClass( subElement, 'menuBody' ) ) {
@@ -348,7 +384,10 @@ popup.showMenu = function( event ) {
 	} )
 }
 
-popup.hideMenu = function( event ) {
+/**
+ * Hides the menu.
+ */
+popup.hideMenu = function( element ) {
 	var element = event.target
 	dom.walkRecursively( element, function( subElement ) {
 		if( html.hasClass( subElement, 'menuBody' ) ) {

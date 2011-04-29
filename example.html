@@ -2,6 +2,8 @@
 <html>
 <head>
 
+<title>jutils.js example</title>
+
 <link rel="stylesheet" href="example.css" type="text/css"> 
 
 <link rel="stylesheet" href="jutils.css" type="text/css"> 
@@ -21,7 +23,7 @@ var init = function() {
 	// Init menus:
 	dom.walk( function( element ) {
 		if( html.hasClass( element, 'menuItem' ) ) {
-			popup.addPopup( element )
+			popup.registerMenu( element )
 		}
 	} )
 
@@ -37,6 +39,8 @@ var onAjax = function( data ) {
 
 </head>
 <body onload="init()">
+
+<h1>Work in progress</h1>
 
 <div id="disablingDiv">
 	<div id="disablingDivContent"></div>

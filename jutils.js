@@ -37,20 +37,33 @@ dom.createElement = function( name, parameters, style, innerHTML ) {
 	return element
 }
 
+/**
+ * "Walks" all the subnodes of this node.
+ *
+ * If the function callOnElement returns anything that is not false the "walk" will stop
+ * there, and the result will be returned from the main function.
+ */
 dom.walkRecursively = function( element, callOnElement ) {
 	if( element && callOnElement ) {
-		callOnElement( element )
+		var result = callOnElement( element )
+		if( result )
+			return result
 
 		if( element.childNodes ) {
 			for( i in element.childNodes ) {
-				dom.walkRecursively( element.childNodes[ i ], callOnElement )
+				var result = dom.walkRecursively( element.childNodes[ i ], callOnElement )
+				if( result )
+					return result
 			}
 		}
 	}
 }
 
+/**
+ * See dom.walkRecursively
+ */
 dom.walk = function( callOnElement ) {
-	dom.walkRecursively( document.documentElement, callOnElement )
+	return dom.walkRecursively( document.documentElement, callOnElement )
 }
 
 // --------------------------------------------------------------------------------------
@@ -341,10 +354,8 @@ popup.currentMenuId = 1
  * submenu to be shown.
  */
 popup.registerMenu = function( element ) {
-	element.menuId = '' + popup.currentMenuId
-
-	utils.addListener( element, 'mouseover', popup.showMenu )
-	utils.addListener( element, 'mouseout', popup.hideMenu )
+	utils.addListener( element, 'mouseover', popup.showMenuByEvent )
+	utils.addListener( element, 'mouseout', popup.startHidingMenuByEvent )
 }
 
 /** For private use */
@@ -353,14 +364,20 @@ popup.showMenuByEvent = function( event ) {
 }
 
 /** For private use */
-popup.hideMenuByEvent = function( event ) {
-	popup.hideMenu( event.target )
+popup.startHidingMenuByEvent = function( event ) {
+	popup.startHidingMenu( event.target )
 }
 
-popup.hideAllMenus = function( exceptMenuId ) {
-	for( menuId in popup.registeredMenus )
-		if( ! exceptMenuId || menuId != exceptMenuId )
-			var menu = popup.registeredMenus[ menuId ]
+/**
+ * Hides all menus. The option exceptMenu is optional. 
+ */
+popup.hideAllMenus = function( exceptMenu ) {
+	for( menu in popup.registeredMenus ) {
+		if( ! exceptMenu || menu != exceptMenu ) {
+			var menuBody = popup.registeredMenus[ menu ]
+			menuBody.style.visibility = 'hidden'
+		}
+	}
 }
 
 /**
@@ -368,79 +385,43 @@ popup.hideAllMenus = function( exceptMenuId ) {
  */
 popup.showMenu = function( element ) {
 
-	// 1. hide all other menus
-	popup.hideAllMenus( element.menuId )
+	// remove evenual hiding timeout for this menu
+	if( popup.hideMenuTimeout )
+		clearTimeout( popup.hideMenuTimeout )
 
-	// 2. remove evenual hiding timeout for this menu
+	// This event may occur on the menu or on the menu body
+	for( menu in popup.registeredMenus ) {
+		if( element == popup.registeredMenus[ menu ] ) {
+			return
+		}
+	}
 
-	// 3. add listeners (if they aren't already added) to menu elements
+	// hide all other menus
+	popup.hideAllMenus()
 
-	var element = event.target
-	dom.walkRecursively( element, function( subElement ) {
+	// Find the first subElement with class 'menuBody':
+	var subMenu = dom.walkRecursively( element, function( subElement ) {
 		if( html.hasClass( subElement, 'menuBody' ) ) {
-			subElement.style.visibility = 'visible'
-			subElement.style.top = element.offsetHeight + 1 + 'px'
+			return subElement
 		}
 	} )
+
+	if( subMenu ) {
+		subMenu.style.visibility = 'visible'
+		subMenu.style.top = element.offsetHeight + 1 + 'px'
+
+		// Register if not registered yet:
+		popup.registeredMenus[ element ] = subMenu
+	}
 }
 
 /**
- * Hides the menu.
+ * Hides the menu .75 seconds from now. Stores the timeout object
  */
-popup.hideMenu = function( element ) {
-	var element = event.target
-	dom.walkRecursively( element, function( subElement ) {
-		if( html.hasClass( subElement, 'menuBody' ) ) {
-			subElement.style.visibility = 'hidden'
-		}
-	} )
+popup.startHidingMenu = function( element ) {
+	popup.hideMenuTimeout = setTimeout( 'popup.hideAllMenus()', 750 );
 }
 
-/*
-
-popup.hideMenuTimeouts = new Array();
-popup.registeredMenus = new Array();
-popup.maxZIndex = 9999;
- 
-popup.register = function( menu ) {
-	if( "string" == typeof menu ) {
-		menu = document.getElementById( menu );
-	}
-	if( menu ) {
-		popup.registeredMenus.push( menu );
-	}
+// TODO
+popup.registerTooltip = function( element ) {
 }
- 
-popup.show = function( menu ) {
-	if( "string" == typeof menu ) {
-		menu = document.getElementById( menu );
-	}
-	try {
-		// Ako je u toku postupak zatvaranja: brisemo to:
-		clearTimeout( popup.hideMenuTimeouts[ menu.id ] );
-	}
-	catch( e ) {}
-	// Brisemo sve ostale menije koji su eventualno zatvoreni:
-	for( m in popup.registeredMenus ) {
-		m = popup.registeredMenus[ m ];
-		if( m && m.style ) {
-			m.style.visibility = "hidden";
-		}
-	}
-	if( menu ) {
-		popup.register( menu );
-		menu.style.visibility = "visible";
-		menu.style.zIndex = popup.maxZIndex;
-		++ popup.maxZIndex;
-	}
-}
- 
-popup.hide = function( menu ) {
-	if( "string" == typeof menu ) {
-		menu = document.getElementById( menu );
-	}
-	var str = "document.getElementById(\"" + menu.id + "\").style.visibility=\"hidden\"";
-	popup.hideMenuTimeouts[ menu.id ] = setTimeout( str, 750 );
-}
-
-*/

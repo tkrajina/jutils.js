@@ -29,6 +29,7 @@ var init = function() {
 
 }
 
+// Method to be called on ajax request
 var onAjax = function( data ) {
 	var json = utils.parseJson( data )
 	var element = dom.byId( 'ajaxResult' )
@@ -63,10 +64,13 @@ var onAjax = function( data ) {
 	<a href="javascript:void(utils.blockPage('Message text here'))">Block page</a>
 </div>
 
-<div class="menuItem" style="float:left;">Menu 1<div class="menuBody">Menu contents</div></div>
-<div class="menuItem" style="float:left;">Menu 2<div class="menuBody">Menu contents</div></div>
+<div id="menu1" class="menuItem" style="float:left;">Menu 1<div class="menuBody">Menu contents<br>Menu content</div></div>
+<div id="menu2" class="menuItem" style="float:left;">Menu 2<div class="menuBody">Menu contents<br>Menu content</div></div>
+<div id="menu3" class="menuItem" style="float:left;">Menu 3<div class="menuBody">Menu contents<br>Menu content</div></div>
 
 <div style="clear:both;"></div>
+
+<div style="log"></div>
 
 </body>
 </html>

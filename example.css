@@ -17,3 +17,15 @@ div.highlighted {
 	background-color: #d6f1af;
 }
 
+div.menuItem {
+	background: #dddddd;
+	border: 1px solid green;
+	padding:2px;
+	margin:2px;
+	float:left;
+}
+
+div.menuBody {
+	border: 1px solid gray;
+	width:100px;
+}

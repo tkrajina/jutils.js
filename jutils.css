@@ -34,6 +34,20 @@ div#disablingDivContent a:hover {
 	color:#ff0000;
 }
 
+/***********************************/
+
+div#tooltip {
+	fontSize: 0.8em;
+	position: absolute;
+	visibility: hidden;
+	top: 10px;
+	left: 10px;
+	background: #fff7c2;
+	padding: 2px;
+}
+
+/***********************************/
+
 .menuItem {
 	position:relative;
 }
@@ -44,3 +58,4 @@ div#disablingDivContent a:hover {
 	left:0px;
 	visibility:hidden;
 }
+

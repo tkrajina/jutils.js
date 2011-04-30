@@ -422,6 +422,51 @@ popup.startHidingMenu = function( element ) {
 	popup.hideMenuTimeout = setTimeout( 'popup.hideAllMenus()', 750 );
 }
 
-// TODO
-popup.registerTooltip = function( element ) {
+popup.tooltipText = null
+popup.tooltipTimeout = null
+
+/**
+ * Will register a popup for this element. 
+ * 
+ * If the textOrFunction is a string then the tooltip will be filled with this string.
+ * 
+ * If the textOrFunction is a function, the the function will be executed (the only
+ * argument is the event) and the result will be filled in the tooltip.
+ */
+popup.registerTooltip = function( element, textOrFunction ) {
+	utils.addListener( element, 'mousemove', function( event ) {
+
+		popup.hideTooltip()
+
+		if( 'string' == typeof textOrFunction )
+			var text = textOrFunction
+		else
+			var text = textOrFunction( event )
+
+		popup.tooltipText = text
+		popup.tooltipX = event.clientX
+		popup.tooltipY = event.clientY
+
+		popup.tooltipTimeout = setTimeout( 'popup.showTooltip()', 500 )
+	} )
+	utils.addListener( element, 'mouseout', function( event ) {
+		popup.hideTooltip()
+	} )
+}
+
+popup.showTooltip = function() {
+	var tooltip = dom.byId( 'tooltip' )
+	tooltip.style.visibility = 'visible'
+	tooltip.style.left = popup.tooltipX + 20 + 'px'
+	tooltip.style.top = popup.tooltipY + 'px'
+	tooltip.innerHTML = popup.tooltipText
+}
+
+popup.hideTooltip = function() {
+	if( popup.tooltipTimeout )
+		clearTimeout( popup.tooltipTimeout )
+
+	var tooltip = dom.byId( 'tooltip' )
+	tooltip.style.visibility = 'hidden'
+
 }

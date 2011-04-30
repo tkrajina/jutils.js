@@ -28,4 +28,5 @@ div.menuItem {
 div.menuBody {
 	border: 1px solid gray;
 	width:100px;
+	background:white;
 }

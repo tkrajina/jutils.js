@@ -306,6 +306,16 @@ utils.getFormParameters = function( formElement ) {
 	return result
 }
 
+/**
+ * Returns the target element for an event.
+ */
+utils.getEventTarget = function( event ) {
+	if( event.srcElement ) {
+		return event.srcElement
+	}
+	return event.target
+}
+
 // --------------------------------------------------------------------------------------
 // html:
 // --------------------------------------------------------------------------------------
@@ -372,12 +382,12 @@ popup.registerMenu = function( element ) {
 
 /** For private use */
 popup.showMenuByEvent = function( event ) {
-	popup.showMenu( event.target )
+	popup.showMenu( utils.getEventTarget( event ) )
 }
 
 /** For private use */
 popup.startHidingMenuByEvent = function( event ) {
-	popup.startHidingMenu( event.target )
+	popup.startHidingMenu( utils.getEventTarget( event ) )
 }
 
 /**

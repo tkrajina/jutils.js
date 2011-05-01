@@ -49,13 +49,16 @@ div#tooltip {
 /***********************************/
 
 .menuItem {
-	position:relative;
+	position:relative;border:1px solid black;
 }
 
 .menuBody {
 	position:absolute;
+	width:100px;
+	border:1px solid blue;
 	top:0px;
 	left:0px;
+	background:white;
 	visibility:hidden;
 }
 

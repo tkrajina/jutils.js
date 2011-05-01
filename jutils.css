@@ -6,7 +6,6 @@ div#blockDiv {
 	-moz-opacity: 0.6;
 	opacity:.60;
 	filter: alpha(opacity=60);
-	text-align:center;
 	color:white;
 }
 
@@ -49,16 +48,19 @@ div#tooltip {
 /***********************************/
 
 .menuItem {
-	position:relative;border:1px solid black;
+	position:relative;
+	/* Optional: */
+	border:1px solid black;
 }
 
 .menuBody {
 	position:absolute;
-	width:100px;
-	border:1px solid blue;
 	top:0px;
 	left:0px;
-	background:white;
 	visibility:hidden;
+	/* Optional: */
+	width:100px;
+	border:1px solid blue;
+	background:white;
 }
 

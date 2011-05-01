@@ -430,6 +430,7 @@ popup.showMenu = function( element ) {
 
 	if( subMenu ) {
 		subMenu.style.visibility = 'visible'
+		subMenu.style.left = '0px'
 		subMenu.style.top = element.offsetHeight + 1 + 'px'
 
 		// Register if not registered yet:

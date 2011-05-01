@@ -397,9 +397,6 @@ popup.currentMenuId = 1
  * submenu to be shown.
  */
 popup.registerMenu = function( element ) {
-	utils.addListener( element, 'mouseover', popup.showMenuByEvent )
-	utils.addListener( element, 'mouseout', popup.startHidingMenuByEvent )
-
 	// Find the first subElement with class 'menuBody':
 	var subMenu = dom.walkSubtree( element, function( subElement ) {
 		if( html.hasClass( subElement, 'menuBody' ) ) {
@@ -408,8 +405,13 @@ popup.registerMenu = function( element ) {
 	} )
 
 	// Store submenu, and register it:
-	element.menuBody = subMenu
-	popup.registeredMenus.push( element )
+	if( subMenu ) {
+		utils.addListener( element, 'mouseover', popup.showMenuByEvent )
+		utils.addListener( element, 'mouseout', popup.startHidingMenuByEvent )
+
+		element.menuBody = subMenu
+		popup.registeredMenus.push( element )
+	}
 }
 
 /** For private use */

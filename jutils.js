@@ -388,8 +388,8 @@ html.addMouseOverClass = function( element, className ) {
 // Kad izađe -- čeka .75 sekunde da se obriše
 // Kad se otvori bilo koji meni -- ostali se zatvaraju
 
-/** Menu id ids -> Menu body. Note, menu must have unique ids! */
-popup.registeredMenus = {}
+/** Contains menu items. Every menuItem has a menuBody property. */
+popup.registeredMenus = []
 popup.currentMenuId = 1
 
 /**
@@ -407,8 +407,9 @@ popup.registerMenu = function( element ) {
 		}
 	} )
 
-	popup.registeredMenus[ element.id ] = subMenu
-
+	// Store submenu, and register it:
+	element.menuBody = subMenu
+	popup.registeredMenus.push( element )
 }
 
 /** For private use */
@@ -425,10 +426,10 @@ popup.startHidingMenuByEvent = function( event ) {
  * Hides all menus. The option exceptMenu is optional. 
  */
 popup.hideAllMenus = function( exceptMenu ) {
-	for( menuId in popup.registeredMenus ) {
-		if( ! exceptMenu || menuId != exceptMenu.id ) {
-			var menuBody = popup.registeredMenus[ menuId ]
-			menuBody.style.visibility = 'hidden'
+	for( i in popup.registeredMenus ) {
+		var menu = popup.registeredMenus[ i ]
+		if( ! exceptMenu || menu != exceptMenu ) {
+			menu.menuBody.style.visibility = 'hidden'
 		}
 	}
 }
@@ -444,8 +445,9 @@ popup.showMenu = function( element ) {
 
 	// This event may occur on the menu or on the menu body or on any of their chidren
 	var menuBody = dom.walkBranch( element, function( el ) {
-		for( menuId in popup.registeredMenus ) {
-			if( popup.registeredMenus[ menuId ] == el ) {
+		for( i in popup.registeredMenus ) {
+			var menu = popup.registeredMenus[ i ]
+			if( menu.menuBody == el ) {
 				return el
 			}
 		}
@@ -456,8 +458,9 @@ popup.showMenu = function( element ) {
 		return
 
 	var menuItem = dom.walkBranch( element, function( el ) {
-		for( menuId in popup.registeredMenus ) {
-			if( menuId == el.id ) {
+		for( i in popup.registeredMenus ) {
+			var menu = popup.registeredMenus[ i ]
+			if( menu == el ) {
 				return el
 			}
 		}
@@ -467,13 +470,12 @@ popup.showMenu = function( element ) {
 	popup.hideAllMenus()
 
 	// Show and position the menu body:
-	var menuBody = popup.registeredMenus[ menuItem.id ]
 
 	//alert( menuItem.id + '->' + menuBody.id )
 
-	menuBody.style.visibility = 'visible'
-	menuBody.style.left = '0px'
-	menuBody.style.top = menuItem.offsetHeight + 1 + 'px'
+	menuItem.menuBody.style.visibility = 'visible'
+	menuItem.menuBody.style.left = '0px'
+	menuItem.menuBody.style.top = menuItem.offsetHeight + 1 + 'px'
 }
 
 /**

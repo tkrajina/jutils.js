@@ -60,6 +60,25 @@ dom.walkSubtree = function( element, callOnElement ) {
 }
 
 /**
+ * Unline walkTree(), this method walks the current branch. I.e, from the current element
+ * to the root. If callOnElement returns a non-false result the "walk" will stop there
+ * and this value will be returned by this method.
+ */
+dom.walkBranch = function( element, callOnElement ) {
+	var currentElement = element
+	while( currentElement && currentElement != document ) {
+
+		var result = callOnElement( currentElement )
+
+		if( result )
+			return result
+
+		if( currentElement.parentNode )
+			currentElement = currentElement.parentNode
+	}
+}
+
+/**
  * See dom.walkSubtree
  */
 dom.walk = function( callOnElement ) {
@@ -267,6 +286,7 @@ utils.unblockPage = function() {
 	blockDivContent.style.display = 'none'
 }
 
+// TODO: remove
 utils.openImage = function( imageKey ) {
 	var onAjax = function( data ) {
 		data = eval( "(" + data + ")" )
@@ -368,6 +388,7 @@ html.addMouseOverClass = function( element, className ) {
 // Kad izađe -- čeka .75 sekunde da se obriše
 // Kad se otvori bilo koji meni -- ostali se zatvaraju
 
+/** Menu id ids -> Menu body. Note, menu must have unique ids! */
 popup.registeredMenus = {}
 popup.currentMenuId = 1
 
@@ -378,6 +399,16 @@ popup.currentMenuId = 1
 popup.registerMenu = function( element ) {
 	utils.addListener( element, 'mouseover', popup.showMenuByEvent )
 	utils.addListener( element, 'mouseout', popup.startHidingMenuByEvent )
+
+	// Find the first subElement with class 'menuBody':
+	var subMenu = dom.walkSubtree( element, function( subElement ) {
+		if( html.hasClass( subElement, 'menuBody' ) ) {
+			return subElement
+		}
+	} )
+
+	popup.registeredMenus[ element.id ] = subMenu
+
 }
 
 /** For private use */
@@ -394,9 +425,9 @@ popup.startHidingMenuByEvent = function( event ) {
  * Hides all menus. The option exceptMenu is optional. 
  */
 popup.hideAllMenus = function( exceptMenu ) {
-	for( menu in popup.registeredMenus ) {
-		if( ! exceptMenu || menu != exceptMenu ) {
-			var menuBody = popup.registeredMenus[ menu ]
+	for( menuId in popup.registeredMenus ) {
+		if( ! exceptMenu || menuId != exceptMenu.id ) {
+			var menuBody = popup.registeredMenus[ menuId ]
 			menuBody.style.visibility = 'hidden'
 		}
 	}
@@ -411,31 +442,38 @@ popup.showMenu = function( element ) {
 	if( popup.hideMenuTimeout )
 		clearTimeout( popup.hideMenuTimeout )
 
-	// This event may occur on the menu or on the menu body
-	for( menu in popup.registeredMenus ) {
-		if( element == popup.registeredMenus[ menu ] ) {
-			return
+	// This event may occur on the menu or on the menu body or on any of their chidren
+	var menuBody = dom.walkBranch( element, function( el ) {
+		for( menuId in popup.registeredMenus ) {
+			if( popup.registeredMenus[ menuId ] == el ) {
+				return el
+			}
 		}
-	}
+	} )
+
+	// If this event is on menu body, then everything is already OK
+	if( menuBody ) 
+		return
+
+	var menuItem = dom.walkBranch( element, function( el ) {
+		for( menuId in popup.registeredMenus ) {
+			if( menuId == el.id ) {
+				return el
+			}
+		}
+	} )
 
 	// hide all other menus
 	popup.hideAllMenus()
 
-	// Find the first subElement with class 'menuBody':
-	var subMenu = dom.walkSubtree( element, function( subElement ) {
-		if( html.hasClass( subElement, 'menuBody' ) ) {
-			return subElement
-		}
-	} )
+	// Show and position the menu body:
+	var menuBody = popup.registeredMenus[ menuItem.id ]
 
-	if( subMenu ) {
-		subMenu.style.visibility = 'visible'
-		subMenu.style.left = '0px'
-		subMenu.style.top = element.offsetHeight + 1 + 'px'
+	//alert( menuItem.id + '->' + menuBody.id )
 
-		// Register if not registered yet:
-		popup.registeredMenus[ element ] = subMenu
-	}
+	menuBody.style.visibility = 'visible'
+	menuBody.style.left = '0px'
+	menuBody.style.top = menuItem.offsetHeight + 1 + 'px'
 }
 
 /**

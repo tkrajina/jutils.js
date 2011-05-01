@@ -43,7 +43,7 @@ dom.createElement = function( name, parameters, style, innerHTML ) {
  * If the function callOnElement returns anything that is not false the "walk" will stop
  * there, and the result will be returned from the main function.
  */
-dom.walkRecursively = function( element, callOnElement ) {
+dom.walkSubtree = function( element, callOnElement ) {
 	if( element && callOnElement ) {
 		var result = callOnElement( element )
 		if( result )
@@ -51,7 +51,7 @@ dom.walkRecursively = function( element, callOnElement ) {
 
 		if( element.childNodes ) {
 			for( i in element.childNodes ) {
-				var result = dom.walkRecursively( element.childNodes[ i ], callOnElement )
+				var result = dom.walkSubtree( element.childNodes[ i ], callOnElement )
 				if( result )
 					return result
 			}
@@ -60,10 +60,10 @@ dom.walkRecursively = function( element, callOnElement ) {
 }
 
 /**
- * See dom.walkRecursively
+ * See dom.walkSubtree
  */
 dom.walk = function( callOnElement ) {
-	return dom.walkRecursively( document.documentElement, callOnElement )
+	return dom.walkSubtree( document.documentElement, callOnElement )
 }
 
 // --------------------------------------------------------------------------------------
@@ -197,6 +197,7 @@ utils.getElementPosition = function( element ) {
 }
 
 utils.blockPage = function( content, options ) {
+	utils.initBlockPageDivs()
 
 	if( ! options ) {
 		// Defaults:
@@ -207,52 +208,63 @@ utils.blockPage = function( content, options ) {
 		// options.height = '100px'
 	}
 
-	var disablingDiv = document.getElementById( "disablingDiv" )
-	var disablingDivContent = document.getElementById( "disablingDivContent" )
+	var blockDiv = document.getElementById( "blockDiv" )
+	var blockDivContent = document.getElementById( "blockDivContent" )
 
 	var normalBrowser = navigator.userAgent.indexOf( 'MSIE' ) < 0
 	if( normalBrowser ) {
-		disablingDiv.style.position = 'fixed'
-		disablingDivContent.style.position = 'fixed'
-		disablingDiv.style.top = '0%'
-		disablingDiv.style.left = '0%'
-		disablingDiv.style.width = '100%'
-		disablingDiv.style.height = '100%'
+		blockDiv.style.position = 'fixed'
+		blockDivContent.style.position = 'fixed'
+		blockDiv.style.top = '0%'
+		blockDiv.style.left = '0%'
+		blockDiv.style.width = '100%'
+		blockDiv.style.height = '100%'
 	}
 	else {
-		disablingDiv.style.position = 'absolute'
-		disablingDivContent.style.position = 'absolute'
-		disablingDiv.style.top = '0px'
-		disablingDiv.style.left = '0px'
-		disablingDiv.style.width = document.body.offsetWidth + 'px'
-		disablingDiv.style.height = document.body.offsetHeight + 'px'
-		disablingDivContent.style.paddingTop = document.documentElement.scrollTop + 'px'
+		blockDiv.style.position = 'absolute'
+		blockDivContent.style.position = 'absolute'
+		blockDiv.style.top = '0px'
+		blockDiv.style.left = '0px'
+		blockDiv.style.width = document.body.offsetWidth + 'px'
+		blockDiv.style.height = document.body.offsetHeight + 'px'
+		blockDivContent.style.paddingTop = document.documentElement.scrollTop + 'px'
 	}
 
 	if( options.showCloseLink ) {
 		content += "<br/><br/><a href='javascript:void(utils.unblockPage())'>Close</a>"
 	}
 
-	disablingDivContent.innerHTML = content
+	blockDivContent.innerHTML = content
 
-	disablingDiv.style.zIndex = '100000'
-	disablingDivContent.style.zIndex = '100001'
+	blockDiv.style.zIndex = '100000'
+	blockDivContent.style.zIndex = '100001'
 
-	disablingDiv.style.display = 'block'
-	disablingDivContent.style.display = 'block'
+	blockDiv.style.display = 'block'
+	blockDivContent.style.display = 'block'
 
 	// TODO
-	// disablingDivContent.style.width = options.width
-	// disablingDivContent.style.height = options.height
-	disablingDivContent.style.margin = 'auto'
-	disablingDivContent.style.border = '1px solid black'
+	// blockDivContent.style.width = options.width
+	// blockDivContent.style.height = options.height
+	blockDivContent.style.margin = 'auto'
+	blockDivContent.style.border = '1px solid black'
+}
+
+utils.initBlockPageDivs = function() {
+	if( ! dom.byId( 'blockDiv' ) ) {
+		var blockPageDiv = dom.createElement( 'div', { 'id': 'blockDiv' }, {}, '' )
+		var blockPageDivContent = dom.createElement( 'div', { 'id': 'blockDivContent' }, {}, '' )
+		blockPageDiv.appendChild( blockPageDivContent )
+
+		var body = document.getElementsByTagName( 'body' )[ 0 ]
+		body.appendChild( blockPageDiv )
+	}
 }
 
 utils.unblockPage = function() {
-	var disablingDiv = document.getElementById( "disablingDiv" )
-	var disablingDivContent = document.getElementById( "disablingDivContent" )
-	disablingDiv.style.display = 'none'
-	disablingDivContent.style.display = 'none'
+	var blockDiv = document.getElementById( "blockDiv" )
+	var blockDivContent = document.getElementById( "blockDivContent" )
+	blockDiv.style.display = 'none'
+	blockDivContent.style.display = 'none'
 }
 
 utils.openImage = function( imageKey ) {
@@ -400,7 +412,7 @@ popup.showMenu = function( element ) {
 	popup.hideAllMenus()
 
 	// Find the first subElement with class 'menuBody':
-	var subMenu = dom.walkRecursively( element, function( subElement ) {
+	var subMenu = dom.walkSubtree( element, function( subElement ) {
 		if( html.hasClass( subElement, 'menuBody' ) ) {
 			return subElement
 		}
@@ -434,6 +446,7 @@ popup.tooltipTimeout = null
  * argument is the event) and the result will be filled in the tooltip.
  */
 popup.registerTooltip = function( element, textOrFunction ) {
+	popup.initTooltipDiv()
 	utils.addListener( element, 'mousemove', function( event ) {
 
 		popup.hideTooltip()
@@ -452,6 +465,14 @@ popup.registerTooltip = function( element, textOrFunction ) {
 	utils.addListener( element, 'mouseout', function( event ) {
 		popup.hideTooltip()
 	} )
+}
+
+popup.initTooltipDiv = function() {
+	if( ! dom.byId( 'tooltip' ) ) {
+		var tooltipDiv = dom.createElement( 'div', { 'id': 'tooltip' }, {}, '' )
+		var body = document.getElementsByTagName( 'body' )[ 0 ]
+		body.appendChild( tooltipDiv )
+	}
 }
 
 popup.showTooltip = function() {

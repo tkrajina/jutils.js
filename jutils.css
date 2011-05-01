@@ -1,6 +1,6 @@
 /* Used in utils.js */
 
-div#disablingDiv {
+div#blockDiv {
 	display: none;
 	background-color: black;
 	-moz-opacity: 0.6;
@@ -10,7 +10,7 @@ div#disablingDiv {
 	color:white;
 }
 
-div#disablingDivContent {
+div#blockDivContent {
 	display: none;
 	margin-top:50px;
 	width:100%;
@@ -18,7 +18,7 @@ div#disablingDivContent {
 	color: white;
 }
 
-div#disablingDivContent a { 
+div#blockDivContent a { 
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 	border:1px solid #cccccc;
@@ -27,10 +27,10 @@ div#disablingDivContent a {
 	font-weight: bold;
 	color:#0000ff;
 }
-div#disablingDivContent a:visited { 
+div#blockDivContent a:visited { 
 	color:#0000ff; 
 }
-div#disablingDivContent a:hover {
+div#blockDivContent a:hover {
 	color:#ff0000;
 }
 

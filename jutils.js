@@ -144,8 +144,7 @@ ajax.call = function( method, url, parameters, onResult, options ) {
 		xmlHttp.open( 'POST', url );
 		xmlHttp.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 		xmlHttp.send( reqParams );
-	}
-	else {
+	} else {
 		if( reqParams )
 			url += '?' + reqParams
 
@@ -181,11 +180,29 @@ utils.parseJson = function( data ) {
 	return data
 }
 
+utils.getAndIncrementMaxZIndex = function() {
+	if( utils.maxZIndex ) {
+		var result = utils.maxZIndex
+		utils.maxZIndex += 1
+		return result
+	} else {
+		utils.maxZIndex = 100000
+		dom.walk( function( element ) {
+			if( element.style.zIndex ) {
+				var currentZIndex = parseInt( element.style.zIndex )
+				if( currentZIndex > utils.maxZIndex )
+					utils.maxZIndex = currentZIndex + 1
+			}
+		} )
+
+		return utils.getAndIncrementMaxZIndex()
+	}
+}
+
 utils.addListener = function( element, event, _function ) {
 	if( element && element.addEventListener ) {
 		element.addEventListener( event, _function, false )
-	}
-	else if( element.attachEvent ) {
+	} else if( element.attachEvent ) {
 		element.attachEvent( "on" + event, _function )
 	}
 }
@@ -193,8 +210,7 @@ utils.addListener = function( element, event, _function ) {
 utils.removeListener = function( element, event, _function ) {
 	if( element && element.removeEventListener ) {
 		element.removeEventListener( event, _function, false )
-	}
-	else if( element.detachEvent ) {
+	} else if( element.detachEvent ) {
 		element.detachEvent( "on" + event, _function )
 	}
 }
@@ -238,8 +254,7 @@ utils.blockPage = function( content, options ) {
 		blockDiv.style.left = '0%'
 		blockDiv.style.width = '100%'
 		blockDiv.style.height = '100%'
-	}
-	else {
+	} else {
 		blockDiv.style.position = 'absolute'
 		blockDivContent.style.position = 'absolute'
 		blockDiv.style.top = '0px'
@@ -255,8 +270,8 @@ utils.blockPage = function( content, options ) {
 
 	blockDivContent.innerHTML = content
 
-	blockDiv.style.zIndex = '100000'
-	blockDivContent.style.zIndex = '100001'
+	blockDiv.style.zIndex = utils.getAndIncrementMaxZIndex()
+	blockDivContent.style.zIndex = utils.getAndIncrementMaxZIndex()
 
 	blockDiv.style.display = 'block'
 	blockDivContent.style.display = 'block'
@@ -478,6 +493,7 @@ popup.showMenu = function( element ) {
 	menuItem.menuBody.style.visibility = 'visible'
 	menuItem.menuBody.style.left = '0px'
 	menuItem.menuBody.style.top = menuItem.offsetHeight + 1 + 'px'
+	menuItem.menuBody.style.zIndex = utils.getAndIncrementMaxZIndex()
 }
 
 /**

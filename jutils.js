@@ -188,7 +188,7 @@ utils.getAndIncrementMaxZIndex = function() {
 	} else {
 		utils.maxZIndex = 100000
 		dom.walk( function( element ) {
-			if( element.style.zIndex ) {
+			if( element.style && element.style.zIndex ) {
 				var currentZIndex = parseInt( element.style.zIndex )
 				if( currentZIndex > utils.maxZIndex )
 					utils.maxZIndex = currentZIndex + 1
@@ -354,6 +354,13 @@ utils.getEventTarget = function( event ) {
 // --------------------------------------------------------------------------------------
 // html:
 // --------------------------------------------------------------------------------------
+
+html.getComputedStyle = function( element, style ) {
+	if( element.currentStyle )
+		return element.currentStyle[ style ]
+	else if( window.getComputedStyle )
+		return document.defaultView.getComputedStyle( element, null ).getPropertyValue( style )
+}
 
 html.hasClass = function( element, className ) {
 	if( ! element.className ) {

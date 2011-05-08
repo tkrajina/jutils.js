@@ -19,6 +19,14 @@ dom.byId = function( id ) {
 	return document.getElementById( id );
 }
 
+dom.removeChilds = function( element ) {
+	if( ! element ) return
+
+	while( element.hasChildNodes() ) {
+		element.removeChild( element.childNodes[ 0 ] )
+	}
+}
+
 dom.createElement = function( name, parameters, style, innerHTML ) {
 	var element = document.createElement( name )
 	if( parameters ) {

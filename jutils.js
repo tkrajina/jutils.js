@@ -125,6 +125,10 @@ ajax.call = function( method, url, parameters, onResult, options ) {
 		options.keepBlocked = false
 	}
 
+	// Block page imediately, otherwise the ajax result may come before the block happens
+	if( options.blockPage )
+		utils.blockPage( "Just a moment, please...", { 'showCloseLink': false } )
+
 	if( ! parameters )
 		parameters = {}
 
@@ -160,8 +164,6 @@ ajax.call = function( method, url, parameters, onResult, options ) {
 		xmlHttp.send( null )
 	}
 
-	if( options.blockPage )
-		utils.blockPage( "Just a moment, please..." )
 }
 
 ajax.post = function( url, parameters, onResult, options ) {

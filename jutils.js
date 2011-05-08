@@ -246,9 +246,10 @@ utils.blockPage = function( content, options ) {
 		// Defaults:
 		options = new Object()
 		options.showCloseLink = true
-		// TODO
-		// options.width = '100px'
-		// options.height = '100px'
+		options.width = '100px'
+		options.height = null
+		options.top = '100px'
+		options.left = '100px'
 	}
 
 	var blockDiv = document.getElementById( "blockDiv" )
@@ -272,9 +273,18 @@ utils.blockPage = function( content, options ) {
 		blockDivContent.style.paddingTop = document.documentElement.scrollTop + 'px'
 	}
 
-	if( options.showCloseLink ) {
-		content += "<br/><br/><a href='javascript:void(utils.unblockPage())'>Close</a>"
+	if( ! content ) {
+		content = ''
 	}
+
+	if( options.showCloseLink ) {
+		// TODO: Slika
+		// TODO: Pozicionirati!
+		// TODO: Veličina
+		content += '<div id="blockDivContentClose"><a href="javascript:void(utils.unblockPage())"><img src="close.gif" style="border:none" /></a></div>' 
+	}
+
+	// alert( contents )
 
 	blockDivContent.innerHTML = content
 
@@ -295,10 +305,10 @@ utils.initBlockPageDivs = function() {
 	if( ! dom.byId( 'blockDiv' ) ) {
 		var blockPageDiv = dom.createElement( 'div', { 'id': 'blockDiv' }, {}, '' )
 		var blockPageDivContent = dom.createElement( 'div', { 'id': 'blockDivContent' }, {}, '' )
-		blockPageDiv.appendChild( blockPageDivContent )
 
 		var body = document.getElementsByTagName( 'body' )[ 0 ]
 		body.appendChild( blockPageDiv )
+		body.appendChild( blockPageDivContent )
 	}
 }
 

@@ -239,6 +239,42 @@ utils.getElementPosition = function( element ) {
 	return null
 }
 
+utils.initBlockPageDivs = function() {
+	if( ! dom.byId( 'blockDiv' ) ) {
+		var blockPageDiv = dom.createElement( 'div', { 'id': 'blockDiv' }, {}, '' )
+		var blockPageDivContent = dom.createElement( 'div', { 'id': 'blockDivContent' }, {}, '' )
+
+		var body = document.getElementsByTagName( 'body' )[ 0 ]
+		body.appendChild( blockPageDiv )
+		body.appendChild( blockPageDivContent )
+
+		// When, for example, the div contains an image, it will be resizes only when the image
+		// size is known. So we must check the size
+		blockPageDivContent.checkPosition = function() {
+			var width = this.offsetWidth
+			var height = this.offsetHeight 
+
+			var bodyWidth = document.body.offsetWidth
+			var bodyHeight = document.body.offsetHeight
+
+			this.style.left = ( ( bodyWidth - width ) / 2 ) + 'px'
+
+			// TODO
+			// this.style.top = ( ( bodyHeight - height ) / 2 ) + 'px'
+
+			this.style.top = '40px'
+
+			this.timeout = setTimeout( 'dom.byId("blockDivContent").checkPosition()', 100 )
+		}
+
+		blockPageDivContent.stopCheckingPosition = function() {
+			if( this.timeout ) {
+				clearTimeout( this.timeout )
+			}
+		}
+	}
+}
+
 utils.blockPage = function( content, options ) {
 	utils.initBlockPageDivs()
 
@@ -254,6 +290,8 @@ utils.blockPage = function( content, options ) {
 
 	var blockDiv = document.getElementById( "blockDiv" )
 	var blockDivContent = document.getElementById( "blockDivContent" )
+
+	blockDivContent.checkPosition()
 
 	var normalBrowser = navigator.userAgent.indexOf( 'MSIE' ) < 0
 	if( normalBrowser ) {
@@ -278,13 +316,8 @@ utils.blockPage = function( content, options ) {
 	}
 
 	if( options.showCloseLink ) {
-		// TODO: Slika
-		// TODO: Pozicionirati!
-		// TODO: Veličina
 		content += '<div id="blockDivContentClose"><a href="javascript:void(utils.unblockPage())"><img src="close.gif" style="border:none" /></a></div>' 
 	}
-
-	// alert( contents )
 
 	blockDivContent.innerHTML = content
 
@@ -297,26 +330,17 @@ utils.blockPage = function( content, options ) {
 	// TODO
 	// blockDivContent.style.width = options.width
 	// blockDivContent.style.height = options.height
-	blockDivContent.style.margin = 'auto'
 	blockDivContent.style.border = '1px solid black'
-}
-
-utils.initBlockPageDivs = function() {
-	if( ! dom.byId( 'blockDiv' ) ) {
-		var blockPageDiv = dom.createElement( 'div', { 'id': 'blockDiv' }, {}, '' )
-		var blockPageDivContent = dom.createElement( 'div', { 'id': 'blockDivContent' }, {}, '' )
-
-		var body = document.getElementsByTagName( 'body' )[ 0 ]
-		body.appendChild( blockPageDiv )
-		body.appendChild( blockPageDivContent )
-	}
 }
 
 utils.unblockPage = function() {
 	var blockDiv = document.getElementById( "blockDiv" )
 	var blockDivContent = document.getElementById( "blockDivContent" )
+
 	blockDiv.style.display = 'none'
 	blockDivContent.style.display = 'none'
+
+	blockDivContent.stopCheckingPosition()
 }
 
 // TODO: remove

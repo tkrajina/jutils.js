@@ -318,7 +318,7 @@ utils.blockPage = function( content, options ) {
 	}
 
 	if( options.showCloseLink ) {
-		content += '<div id="blockDivContentClose"><a href="javascript:void(utils.unblockPage())"><img src="close.gif" style="border:none" /></a></div>' 
+		content += '<div id="blockDivContentClose"><a href="javascript:void(utils.unblockPage())"><img src="close.png" style="border:none" /></a></div>' 
 	}
 
 	blockDivContent.innerHTML = content

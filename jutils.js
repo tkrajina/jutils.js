@@ -318,7 +318,7 @@ utils.blockPage = function( content, options ) {
 	}
 
 	if( options.showCloseLink ) {
-		content += '<div id="blockDivClose"><a href="javascript:void(utils.unblockPage())"><img src="close.png" style="border:none" /></a></div>' 
+		content += '<div id="blockDivClose"><a href="javascript:void(utils.unblockPage())"><img src="https://github.com/tkrajina/jutils.js/raw/master/close.png" style="border:none" /></a></div>' 
 	}
 
 	dom.removeChildren( blockDivContent )

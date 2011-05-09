@@ -27,12 +27,11 @@ div#blockDivContent {
 	border: 1px solid black;
 }
 
-/* TODO: Rename */
-div.blockDivContent2 {
+div.blockDivMessage {
 	padding:10px;
 }
 
-div#blockDivContentClose {
+div#blockDivClose {
 	position:absolute;
 	top:-12px;
 	right:-12px;

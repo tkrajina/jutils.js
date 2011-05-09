@@ -19,7 +19,7 @@ dom.byId = function( id ) {
 	return document.getElementById( id );
 }
 
-dom.removeChilds = function( element ) {
+dom.removeChildren = function( element ) {
 	if( ! element ) return
 
 	while( element.hasChildNodes() ) {
@@ -318,12 +318,12 @@ utils.blockPage = function( content, options ) {
 	}
 
 	if( options.showCloseLink ) {
-		content += '<div id="blockDivContentClose"><a href="javascript:void(utils.unblockPage())"><img src="close.png" style="border:none" /></a></div>' 
+		content += '<div id="blockDivClose"><a href="javascript:void(utils.unblockPage())"><img src="close.png" style="border:none" /></a></div>' 
 	}
 
-	dom.removeChilds( blockDivContent )
+	dom.removeChildren( blockDivContent )
 
-	blockDivContent.innerHTML = '<div class="blockDivContent2">' + content + '</div>'
+	blockDivContent.innerHTML = '<div class="blockDivMessage">' + content + '</div>'
 
 	blockDiv.style.zIndex = utils.getAndIncrementMaxZIndex()
 	blockDivContent.style.zIndex = utils.getAndIncrementMaxZIndex()
@@ -345,28 +345,6 @@ utils.unblockPage = function() {
 	blockDivContent.style.display = 'none'
 
 	blockDivContent.stopCheckingPosition()
-}
-
-// TODO: remove
-utils.openImage = function( imageKey ) {
-	var onAjax = function( data ) {
-		data = eval( "(" + data + ")" )
-		var imageUrl = data[ 'image_url' ]
-		var editUrl = data[ 'edit_url' ]
-		var deleteUrl = data[ 'delete_url' ]
-		text = '<img src="' + imageUrl + '" /><br/><br/>'
-		if( editUrl ) {
-			text += '<a href="' + editUrl + '">Edit</a>'
-		}
-		if( editUrl && deleteUrl ) {
-			text += ' &middot; '
-		}
-		if( deleteUrl ) {
-			text += '<a href="' + deleteUrl + '">Delete</a>'
-		}
-		utils.blockPage( text, true )
-	}
-	ajax.get( '/image:' + imageKey + '/ajax/data', onAjax, true )
 }
 
 utils.redirectIf = function( question, url ) {

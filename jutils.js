@@ -321,7 +321,9 @@ utils.blockPage = function( content, options ) {
 		content += '<div id="blockDivContentClose"><a href="javascript:void(utils.unblockPage())"><img src="close.png" style="border:none" /></a></div>' 
 	}
 
-	blockDivContent.innerHTML = content
+	dom.removeChilds( blockDivContent )
+
+	blockDivContent.innerHTML = '<div class="blockDivContent2">' + content + '</div>'
 
 	blockDiv.style.zIndex = utils.getAndIncrementMaxZIndex()
 	blockDivContent.style.zIndex = utils.getAndIncrementMaxZIndex()

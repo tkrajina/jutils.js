@@ -1,1 +1,1 @@
-yui-compressor jutils.js > "jutils-`head -1 VERSION`.js"
+yui-compressor jutils.js > "shrinked/jutils-`head -1 VERSION`.js"

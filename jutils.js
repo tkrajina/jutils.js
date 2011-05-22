@@ -545,22 +545,24 @@ popup.tooltipTimeout = null
  * If the textOrFunction is a function, the the function will be executed (the only
  * argument is the event) and the result will be filled in the tooltip.
  */
-popup.registerTooltip = function( element, textOrFunction ) {
+popup.registerTooltip = function( element, textOrFunction, options ) {
+
+	if( ! options ) {
+		options = new Object()
+		options.timeout = 500
+	}
+
 	popup.initTooltipDiv()
 	utils.addListener( element, 'mousemove', function( event ) {
 
 		popup.hideTooltip()
 
-		if( 'string' == typeof textOrFunction )
-			var text = textOrFunction
-		else
-			var text = textOrFunction( event )
-
-		popup.tooltipText = text
+		popup.tooltipTextOrFunction = textOrFunction
+		popup.tooltipEvent = event
 		popup.tooltipX = event.clientX
 		popup.tooltipY = event.clientY
 
-		popup.tooltipTimeout = setTimeout( 'popup.showTooltip()', 500 )
+		popup.tooltipTimeout = setTimeout( 'popup.showTooltip()', options.timeout )
 	} )
 	utils.addListener( element, 'mouseout', function( event ) {
 		popup.hideTooltip()
@@ -580,7 +582,18 @@ popup.showTooltip = function() {
 	tooltip.style.visibility = 'visible'
 	tooltip.style.left = popup.tooltipX + 20 + 'px'
 	tooltip.style.top = popup.tooltipY + 'px'
-	tooltip.innerHTML = popup.tooltipText
+
+	if( popup.tooltipTextOrFunction ) {
+		if( 'string' == typeof popup.tooltipTextOrFunction )
+			var text = popup.tooltipTextOrFunction
+		else
+			var text = popup.tooltipTextOrFunction( popup.tooltipEvent )
+
+		tooltip.innerHTML = text
+	}
+	else {
+		tooltip.innerHTML = '?'
+	}
 }
 
 popup.hideTooltip = function() {

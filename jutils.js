@@ -241,6 +241,24 @@ utils.getElementPosition = function( element ) {
 	return null
 }
 
+/**
+ * May be used to obtation event position on MouseEvent for browsers that don't have pageX and pageY properties.
+ */
+utils.getEventPosition = function( event ) {
+	var x = null
+	var y = null
+
+	if( event.pageX && event.pageY ) {
+		x = event.pageX
+		y = event.pageY
+	}
+	else if( event.clientX && event.clientY )
+		x = event.clientX + ( document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft )
+		y = event.clientY + ( document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop )
+
+	return [ x, y ]
+}
+
 utils.initBlockPageDivs = function() {
 	if( ! dom.byId( 'blockDiv' ) ) {
 		var blockPageDiv = dom.createElement( 'div', { 'id': 'blockDiv' }, {}, '' )
@@ -557,10 +575,12 @@ popup.registerTooltip = function( element, textOrFunction, options ) {
 
 		popup.hideTooltip()
 
+		var clientPosition = utils.getEventPosition( event )
+
 		popup.tooltipTextOrFunction = textOrFunction
 		popup.tooltipEvent = event
-		popup.tooltipX = event.clientX
-		popup.tooltipY = event.clientY
+		popup.tooltipX = clientPosition[ 0 ]
+		popup.tooltipY = clientPosition[ 1 ]
 
 		popup.tooltipTimeout = setTimeout( 'popup.showTooltip()', options.timeout )
 	} )
@@ -602,5 +622,4 @@ popup.hideTooltip = function() {
 
 	var tooltip = dom.byId( 'tooltip' )
 	tooltip.style.visibility = 'hidden'
-
 }

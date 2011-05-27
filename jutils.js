@@ -248,13 +248,20 @@ utils.getEventPosition = function( event ) {
 	var x = null
 	var y = null
 
-	if( event.pageX && event.pageY ) {
+	if( 'pageX' in event ) {
 		x = event.pageX
 		y = event.pageY
 	}
-	else if( event.clientX && event.clientY )
-		x = event.clientX + ( document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft )
-		y = event.clientY + ( document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop )
+	else if( 'clientX' in event ) {
+		if( 'documentElement' in document && 'scrollLeft' in document.documentElement ) {
+			x = event.clientX + document.documentElement.scrollLeft
+			y = event.clientY + document.documentElement.scrollTop
+		}
+		else {
+			x = event.clientX + document.body.scrollLeft
+			y = event.clientY + document.body.scrollTop
+		}
+	}
 
 	return [ x, y ]
 }
@@ -576,11 +583,18 @@ popup.registerTooltip = function( element, textOrFunction, options ) {
 		popup.hideTooltip()
 
 		var clientPosition = utils.getEventPosition( event )
+		var elementPosition = utils.getElementPosition( element )
 
 		popup.tooltipTextOrFunction = textOrFunction
 		popup.tooltipEvent = event
+
+		// Position on screen:
 		popup.tooltipX = clientPosition[ 0 ]
 		popup.tooltipY = clientPosition[ 1 ]
+
+		// Position on element:
+		popup.positionX = clientPosition[ 0 ] - elementPosition[ 0 ]
+		popup.positionY = clientPosition[ 1 ] - elementPosition[ 1 ]
 
 		popup.tooltipTimeout = setTimeout( 'popup.showTooltip()', options.timeout )
 	} )
@@ -607,7 +621,7 @@ popup.showTooltip = function() {
 		if( 'string' == typeof popup.tooltipTextOrFunction )
 			var text = popup.tooltipTextOrFunction
 		else
-			var text = popup.tooltipTextOrFunction( popup.tooltipEvent )
+			var text = popup.tooltipTextOrFunction( popup.positionX, popup.positionY )
 
 		tooltip.innerHTML = text
 	}

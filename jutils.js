@@ -590,11 +590,18 @@ popup.registerTooltip = function( element, textOrFunction, options ) {
 		popup.hideTooltip()
 
 		var clientPosition = utils.getEventPosition( event )
+		var elementPosition = utils.getElementPosition( element )
 
 		popup.tooltipTextOrFunction = textOrFunction
 		popup.tooltipEvent = event
+
+		// Position on screen:
 		popup.tooltipX = clientPosition[ 0 ]
 		popup.tooltipY = clientPosition[ 1 ]
+
+		// Position on element:
+		popup.positionX = clientPosition[ 0 ] - elementPosition[ 0 ]
+		popup.positionY = clientPosition[ 1 ] - elementPosition[ 1 ]
 
 		popup.tooltipTimeout = setTimeout( 'popup.showTooltip()', options.timeout )
 	} )
@@ -618,10 +625,11 @@ popup.showTooltip = function() {
 	tooltip.style.top = popup.tooltipY + 'px'
 
 	if( popup.tooltipTextOrFunction ) {
-		if( 'string' == typeof popup.tooltipTextOrFunction )
+		if( 'string' == typeof popup.tooltipTextOrFunction ) {
 			var text = popup.tooltipTextOrFunction
-		else
-			var text = popup.tooltipTextOrFunction( popup.tooltipEvent )
+		} else {
+			var text = popup.tooltipTextOrFunction( popup.positionX, popup.positionY )
+		}
 
 		tooltip.innerHTML = text
 	}

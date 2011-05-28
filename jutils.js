@@ -313,10 +313,17 @@ utils.blockPage = function( content, options ) {
 		options.height = null
 		options.top = '100px'
 		options.left = '100px'
+		// If true -- click on the background will close the "blocking" layer
+		options.closeOnClick = false
 	}
 
 	var blockDiv = document.getElementById( "blockDiv" )
 	var blockDivContent = document.getElementById( "blockDivContent" )
+
+	if( options.closeOnClick ) {
+		popup.register
+		utils.addListener( blockDiv, 'click', utils.unblockPage )
+	}
 
 	blockDivContent.checkPosition()
 

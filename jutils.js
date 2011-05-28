@@ -118,12 +118,14 @@ ajax.getXmlHttpRequest = function() {
 
 ajax.call = function( method, url, parameters, onResult, options ) {
 
-	if( ! options ) {
-		// Set defaults:
+	if( ! options )
 		options = new Object()
+
+	// Set defaults:
+	if( ! ( 'blockPage' in options ) )
 		options.blockPage = true
+	if( ! ( 'keepBlocked' in options ) )
 		options.keepBlocked = false
-	}
 
 	// Block page imediately, otherwise the ajax result may come before the block happens
 	if( options.blockPage )
@@ -305,17 +307,23 @@ utils.initBlockPageDivs = function() {
 utils.blockPage = function( content, options ) {
 	utils.initBlockPageDivs()
 
-	if( ! options ) {
-		// Defaults:
+	if( ! options )
 		options = new Object()
+
+	// Defaults:
+	if( ! ( 'showCloseLink' in options ) )
 		options.showCloseLink = true
+	if( ! ( 'width' in options ) )
 		options.width = '100px'
+	if( ! ( 'height' in options ) )
 		options.height = null
+	if( ! ( 'top' in options ) )
 		options.top = '100px'
+	if( ! ( 'left' in options ) )
 		options.left = '100px'
-		// If true -- click on the background will close the "blocking" layer
+	// If true -- click on the background will close the "blocking" layer
+	if( ! ( 'closeOnClick' in options ) )
 		options.closeOnClick = false
-	}
 
 	var blockDiv = document.getElementById( "blockDiv" )
 	var blockDivContent = document.getElementById( "blockDivContent" )
@@ -551,8 +559,6 @@ popup.showMenu = function( element ) {
 
 	// Show and position the menu body:
 
-	//alert( menuItem.id + '->' + menuBody.id )
-
 	menuItem.menuBody.style.visibility = 'visible'
 	menuItem.menuBody.style.left = '0px'
 	menuItem.menuBody.style.top = menuItem.offsetHeight + 1 + 'px'
@@ -579,10 +585,11 @@ popup.tooltipTimeout = null
  */
 popup.registerTooltip = function( element, textOrFunction, options ) {
 
-	if( ! options ) {
+	if( ! options )
 		options = new Object()
+
+	if( ! ( 'timeout' in options ) )
 		options.timeout = 500
-	}
 
 	popup.initTooltipDiv()
 	utils.addListener( element, 'mousemove', function( event ) {

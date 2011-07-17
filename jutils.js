@@ -48,35 +48,6 @@ dom.createElement = function( name, parameters, style, innerHTML ) {
 	return element
 }
 
-dom.create = function( tagName, options ) {
-	if( ! options )
-		options = new Object()
-
-	if( ! ( 'parameters' in options ) )
-		options.parameters = {}
-	if( ! ( 'style' in options ) )
-		options.style = {}
-	if( ! ( 'innerHTML' in options ) )
-		options.innerHTML = ''
-	
-	var element = document.createElement( tagName )
-	if( options.parameters ) {
-		for( parameter in options.parameters ) {
-			element[ parameter ] = parameters[ parameter ]
-		}
-	}
-	if( options.style ) {
-		for( parameter in options.style ) {
-			element.style[ parameter ] = style[ parameter ]
-		}
-	}
-	if( options.innerHTML ) {
-		element.innerHTML = options.innerHTML
-	}
-
-	return element
-}
-
 /**
  * "Walks" all the subnodes of this node.
  *

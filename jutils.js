@@ -190,6 +190,7 @@ utils.parseJson = function( data ) {
 	return data
 }
 
+/** The name of this method should be incrementAndGetMaxZIndex() */
 utils.getAndIncrementMaxZIndex = function() {
 	if( utils.maxZIndex ) {
 		var result = utils.maxZIndex
@@ -702,6 +703,7 @@ popup.showTopMessage = function( text, options ) {
 	topMessageDiv.closeOnClick = options.closeOnClick
 
 	topMessageDiv.style.visibility = 'visible'
+	topMessageDiv.style.zIndex = utils.getAndIncrementMaxZIndex()
 }
 
 popup.hideTopMessage = function() {

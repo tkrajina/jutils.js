@@ -59,7 +59,10 @@ var onAjax = function( data ) {
 
 <div style="clear:both;"></div>
 
-<div class="row">Mouseover effect</div>
+<div class="row">
+	<a href='javascript:void(popup.showTopMessage("Test"))'>Show top message</a>
+	<a href='javascript:void(popup.hideTopMessage())'>Hide top message</a>
+</div>
 <div class="row">Mouseover effect</div>
 <div class="row">Mouseover effect</div>
 <div class="row">Mouseover effect</div>
@@ -79,6 +82,7 @@ var onAjax = function( data ) {
 <div id="withTooltip" style="width:200px;height:200px;border:1px solid black">
 	Mouseover for tooltip
 </div>
+
 
 <div id="log"></div>
 

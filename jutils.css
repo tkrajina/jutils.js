@@ -40,6 +40,23 @@ div#blockDivClose {
 
 /***********************************/
 
+div#topMessage {
+	position:absolute;
+	/* Optional: */
+	width: 500px;
+	font-size:12px;
+	margin-top: -30px;
+	padding: 30px 10px 10px 10px;
+	background-color: #ffdb4b;
+	border: 1px solid #ffac4b;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	text-shadow: #dddddd 1px 1px 1px;
+	text-align: center;
+}
+
+/***********************************/
+
 div#tooltip {
 	fontSize: 0.8em;
 	position: absolute;

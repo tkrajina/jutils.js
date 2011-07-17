@@ -27,9 +27,6 @@ dom.removeChildren = function( element ) {
 	}
 }
 
-/**
- * TODO: Use dom.create instead
- */
 dom.createElement = function( name, parameters, style, innerHTML ) {
 	var element = document.createElement( name )
 	if( parameters ) {
@@ -652,4 +649,67 @@ popup.hideTooltip = function() {
 
 	var tooltip = dom.byId( 'tooltip' )
 	tooltip.style.visibility = 'hidden'
+}
+
+/** Initializes and returns the top message DIV. */
+popup.getTopMessage = function() {
+	var topMessageDiv = dom.byId( 'topMessage' )
+
+	if( ! topMessageDiv ) {
+		topMessageDiv = dom.createElement( 'div', { 'id': 'topMessage' }, null, '' )
+		var body = document.getElementsByTagName( 'body' )[ 0 ]
+		body.insertBefore( topMessageDiv, body.childNodes[ 0 ] )
+	}
+
+	// Position on center:
+	var width = html.getComputedStyle( topMessageDiv, 'width' )
+	width = parseInt( width )
+
+	var bodyWidth = document.body.offsetWidth
+
+	topMessageDiv.style.left = ( ( bodyWidth - width ) / 2 ) + 'px'
+
+	return topMessageDiv
+}
+
+popup.showTopMessage = function( text, options ) {
+
+	if( ! options )
+		options = new Object()
+
+	if( ! ( 'autoClose' in options ) )
+		options.autoClose = true
+	if( ! ( 'autoCloseTimeout' in options ) )
+		options.autoCloseTimeout = 5000
+	if( ! ( 'closeOnClick' in options ) )
+		options.closeOnClick = true
+
+	var topMessageDiv = popup.getTopMessage()
+
+	topMessageDiv.innerHTML = text
+
+	if( options.autoClose ) {
+		topMessageDiv.timeout = setTimeout( 'dom.byId("topMessage").style.visibility="hidden"', options.autoCloseTimeout )
+	}
+
+	utils.addListener( topMessageDiv, 'click', function() {
+		var topMessageDiv = popup.getTopMessage()
+		if( topMessage.closeOnClick ) {
+			popup.hideTopMessage()
+		}
+	} )
+
+	topMessageDiv.closeOnClick = options.closeOnClick
+
+	topMessageDiv.style.visibility = 'visible'
+}
+
+popup.hideTopMessage = function() {
+	var topMessageDiv = popup.getTopMessage()
+	if( topMessageDiv ) {
+		topMessageDiv.style.visibility = 'hidden'
+		if( topMessageDiv.timeout ) {
+			clearTimeout( topMessageDiv.timeout )
+		}
+	}
 }

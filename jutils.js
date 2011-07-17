@@ -27,6 +27,9 @@ dom.removeChildren = function( element ) {
 	}
 }
 
+/**
+ * TODO: Use dom.create instead
+ */
 dom.createElement = function( name, parameters, style, innerHTML ) {
 	var element = document.createElement( name )
 	if( parameters ) {
@@ -42,6 +45,35 @@ dom.createElement = function( name, parameters, style, innerHTML ) {
 	if( innerHTML ) {
 		element.innerHTML = innerHTML
 	}
+	return element
+}
+
+dom.create = function( tagName, options ) {
+	if( ! options )
+		options = new Object()
+
+	if( ! ( 'parameters' in options ) )
+		options.parameters = {}
+	if( ! ( 'style' in options ) )
+		options.style = {}
+	if( ! ( 'innerHTML' in options ) )
+		options.innerHTML = ''
+	
+	var element = document.createElement( tagName )
+	if( options.parameters ) {
+		for( parameter in options.parameters ) {
+			element[ parameter ] = parameters[ parameter ]
+		}
+	}
+	if( options.style ) {
+		for( parameter in options.style ) {
+			element.style[ parameter ] = style[ parameter ]
+		}
+	}
+	if( options.innerHTML ) {
+		element.innerHTML = options.innerHTML
+	}
+
 	return element
 }
 
@@ -117,7 +149,6 @@ ajax.getXmlHttpRequest = function() {
 }
 
 ajax.call = function( method, url, parameters, onResult, options ) {
-
 	if( ! options )
 		options = new Object()
 
@@ -165,7 +196,6 @@ ajax.call = function( method, url, parameters, onResult, options ) {
 		xmlHttp.open( 'GET', url )
 		xmlHttp.send( null )
 	}
-
 }
 
 ajax.post = function( url, parameters, onResult, options ) {

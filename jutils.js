@@ -7,6 +7,7 @@ dom = new Object()
 utils = new Object()
 html = new Object()
 popup = new Object()
+transformations = new Object()
 
 // --------------------------------------------------------------------------------------
 // dom
@@ -714,4 +715,61 @@ popup.hideTopMessage = function() {
 			clearTimeout( topMessageDiv.timeout )
 		}
 	}
+}
+
+// --------------------------------------------------------------------------------------
+// transformations:
+// --------------------------------------------------------------------------------------
+
+/**
+ * Temporary for transformations
+ */
+transformations.transformationLists = {}
+
+/**
+ * transformations.transform( element, { 'width': '12px', 'height': '30px' } )
+ */
+transformations.transform = function( element, rules ) {
+	if( ! element.transformationDefaults ) {
+		element.transformationDefaults = {}
+	}
+	for( rule in rules ) {
+		if( ! rule in element.transformationDefaults ) {
+			// Save default position
+		}
+	}
+
+	// TODO: Save transformation lists:
+
+	transformations.execute()
+}
+
+transformations.execute = function() {
+	// TODO
+	if( transformations.transformationsList ) {
+		setTimeout( 'transformations.execute()', 10 )
+	}
+}
+
+trasformations.getTransformationList( element, style, value, n ) {
+	if( ! n ) {
+		var n = 100
+	}
+	// TODO px, em, colors
+	var from = parseInt( utils.getComputedStyle( element, style ) )
+	var to = parseInt( value )
+	var result = []
+	for( i = 0; i < n; i++ ) {
+		[].push( from + ( from - to ) * i / n )
+	}
+	alert( result )
+	return result
+}
+
+/** Will reset this style to default value. */
+transformations.reset = function( element, style ) {
+}
+
+/** Will reset all styles to default values. */
+transformations.resetAll = function( element ) {
 }

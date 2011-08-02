@@ -14,24 +14,24 @@
 var init = function() {
 
 	// Init onmouse over effects for elements with class 'row'
-	dom.walk( function( element ) {
-		if( html.hasClass( element, 'row' ) ) {
-			html.addMouseOverClass( element, 'highlighted' )
+	jutils.dom.walk( function( element ) {
+		if( jutils.html.hasClass( element, 'row' ) ) {
+			jutils.html.addMouseOverClass( element, 'highlighted' )
 		}
 	} )
 
 	// Init menus:
-	dom.walk( function( element ) {
-		if( html.hasClass( element, 'menuItem' ) ) {
-			popup.registerMenu( element )
+	jutils.dom.walk( function( element ) {
+		if( jutils.html.hasClass( element, 'menuItem' ) ) {
+			jutils.popup.registerMenu( element )
 		}
 	} )
 
 	// Register tooltips:
-	dom.walk( function( element ) {
+	jutils.dom.walk( function( element ) {
 		if( element.id && element.id == 'withTooltip' ) {
-			popup.registerTooltip( element, function( event ) {
-				return 'Tooltip for event:' + event + ' on ' + event.clientX + ',' + event.clientY
+			jutils.popup.registerTooltip( element, function( x, y ) {
+				return 'Tooltip for event:' + event + ' on ' + x + ',' + y
 			} )
 		}
 	} )
@@ -40,8 +40,8 @@ var init = function() {
 
 // Method to be called on ajax request
 var onAjax = function( data ) {
-	var json = utils.parseJson( data )
-	var element = dom.byId( 'ajaxResult' )
+	var json = jutils.misc.parseJson( data )
+	var element = jutils.dom.byId( 'ajaxResult' )
 	element.innerHTML = 'Received from server: ' + json.message
 }
 
@@ -60,8 +60,8 @@ var onAjax = function( data ) {
 <div style="clear:both;"></div>
 
 <div class="row">
-	<a href='javascript:void(popup.showTopMessage("Test"))'>Show top message</a>
-	<a href='javascript:void(popup.hideTopMessage())'>Hide top message</a>
+	<a href='javascript:void(jutils.popup.showTopMessage("Test"))'>Show top message</a>
+	<a href='javascript:void(jutils.popup.hideTopMessage())'>Hide top message</a>
 </div>
 <div class="row">Mouseover effect</div>
 <div class="row">Mouseover effect</div>
@@ -69,14 +69,14 @@ var onAjax = function( data ) {
 <div class="row">Mouseover effect</div>
 
 <div class="row">
-	Click <a href="javascript:void(ajax.get('example.json', null, onAjax))">here for AJAX call</a>.
+	Click <a href="javascript:void(jutils.ajax.get('example.json', null, onAjax))">here for AJAX call</a>.
 </div>
 
 <div id="ajaxResult" class="row">
 </div>
 
 <div class="row">
-	<a href="javascript:void(utils.blockPage('Your message here',{'closeOnClick':true}))">Block page</a>
+	<a href="javascript:void(jutils.misc.blockPage('Your message here',{'closeOnClick':true}))">Block page</a>
 </div>
 
 <div id="withTooltip" style="width:200px;height:200px;border:1px solid black">

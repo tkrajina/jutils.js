@@ -24,7 +24,7 @@ var init = function() {
 
 	jutils.transformations.transform = function( element, style, from, to, steps ) {
 		if( ! steps ) {
-			var steps = 100 
+			var steps = 100
 		}
 		if( ! element.transformationSteps ) {
 			element.transformationSteps = {}
@@ -62,13 +62,11 @@ var init = function() {
 		for( style in element.transformationSteps ) {
 			if( element.transformationSteps[ style ] ) {
 				var value = element.transformationSteps[ style ].pop()
-				element.style[ style ] = value
-				executed = true
+				if( value ) {
+					element.style[ style ] = value
+					executed = true
+				}
 			}
-		}
-
-		if( ! executed ) {
-			alert( 'kraj' )
 		}
 
 		return executed

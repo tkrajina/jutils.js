@@ -4,8 +4,8 @@
 
 <title>jutils.js example</title>
 
-<link rel="stylesheet" href="../jutils.css" type="text/css"> 
-<script type='text/javascript' src='../jutils.js'></script>
+<link rel="stylesheet" href="jutils.css" type="text/css"> 
+<script type='text/javascript' src='jutils.js'></script>
 
 <style type="text/css">
 div.test {
@@ -24,7 +24,7 @@ var init = function() {
 
 	jutils.transformations.transform = function( element, style, from, to, steps ) {
 		if( ! steps ) {
-			var steps = 100
+			var steps = 100 
 		}
 		if( ! element.transformationSteps ) {
 			element.transformationSteps = {}
@@ -52,6 +52,7 @@ var init = function() {
 	}
 
 	jutils.transformations.executeTransformationStep = function( element ) {
+
 		if( ! element.transformationSteps ) {
 			return false
 		}
@@ -59,9 +60,15 @@ var init = function() {
 		var executed = false
 
 		for( style in element.transformationSteps ) {
-			var value = element.transformationSteps[ style ].pop()
-			element.style[ style ] = value
-			executed = true
+			if( element.transformationSteps[ style ] ) {
+				var value = element.transformationSteps[ style ].pop()
+				element.style[ style ] = value
+				executed = true
+			}
+		}
+
+		if( ! executed ) {
+			alert( 'kraj' )
 		}
 
 		return executed
@@ -71,13 +78,15 @@ var init = function() {
 		var executed = false
 		for( i in jutils.transformations.transformationObjects ) {
 			var element = jutils.transformations.transformationObjects[ i ]
-			executed = executed || jutils.transformations.executeTransformationStep( element )
+			executed = jutils.transformations.executeTransformationStep( element ) || executed
 		}
 		if( executed ) {
 			setTimeout( 'jutils.transformations.execute()', 20 )
 		}
 	}
 
+	/*
+	*/
 	var element = jutils.dom.byId( 'test' )
 	jutils.transformations.transform( element, 'font-size', 10, 200 )
 	jutils.transformations.transform( element, 'border-top-width', 1, 30 )

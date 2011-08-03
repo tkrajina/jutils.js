@@ -2,24 +2,30 @@
  * Misc utility methods grouped in objects utils and ajax
  */
 
-ajax = new Object()
-dom = new Object()
-utils = new Object()
-html = new Object()
-popup = new Object()
+jutils = new Object()
+
+jutils.misc = new Object()
+jutils.ajax = new Object()
+jutils.dom = new Object()
+jutils.html = new Object()
+jutils.popup = new Object()
+jutils.elemens = new Object()
+jutils.events = new Object()
+jutils.transformations = new Object()
+jutils.colors = new Object()
 
 // --------------------------------------------------------------------------------------
 // dom
 // --------------------------------------------------------------------------------------
 
-dom.byId = function( id ) {
+jutils.dom.byId = function( id ) {
 	if( document.all ) {
 		return document.all[ id ];
 	}
 	return document.getElementById( id );
 }
 
-dom.removeChildren = function( element ) {
+jutils.dom.removeChildren = function( element ) {
 	if( ! element ) return
 
 	while( element.hasChildNodes() ) {
@@ -27,7 +33,7 @@ dom.removeChildren = function( element ) {
 	}
 }
 
-dom.createElement = function( name, parameters, style, innerHTML ) {
+jutils.dom.createElement = function( name, parameters, style, innerHTML ) {
 	var element = document.createElement( name )
 	if( parameters ) {
 		for( parameter in parameters ) {
@@ -51,7 +57,7 @@ dom.createElement = function( name, parameters, style, innerHTML ) {
  * If the function callOnElement returns anything that is not false the "walk" will stop
  * there, and the result will be returned from the main function.
  */
-dom.walkSubtree = function( element, callOnElement ) {
+jutils.dom.walkSubtree = function( element, callOnElement ) {
 	if( element && callOnElement ) {
 		var result = callOnElement( element )
 		if( result )
@@ -59,7 +65,7 @@ dom.walkSubtree = function( element, callOnElement ) {
 
 		if( element.childNodes ) {
 			for( i in element.childNodes ) {
-				var result = dom.walkSubtree( element.childNodes[ i ], callOnElement )
+				var result = jutils.dom.walkSubtree( element.childNodes[ i ], callOnElement )
 				if( result )
 					return result
 			}
@@ -72,7 +78,7 @@ dom.walkSubtree = function( element, callOnElement ) {
  * to the root. If callOnElement returns a non-false result the "walk" will stop there
  * and this value will be returned by this method.
  */
-dom.walkBranch = function( element, callOnElement ) {
+jutils.dom.walkBranch = function( element, callOnElement ) {
 	var currentElement = element
 	while( currentElement && currentElement != document ) {
 
@@ -87,17 +93,17 @@ dom.walkBranch = function( element, callOnElement ) {
 }
 
 /**
- * See dom.walkSubtree
+ * See jutils.dom.walkSubtree
  */
-dom.walk = function( callOnElement ) {
-	return dom.walkSubtree( document.documentElement, callOnElement )
+jutils.dom.walk = function( callOnElement ) {
+	return jutils.dom.walkSubtree( document.documentElement, callOnElement )
 }
 
 // --------------------------------------------------------------------------------------
 // ajax
 // --------------------------------------------------------------------------------------
 
-ajax.getXmlHttpRequest = function() {
+jutils.ajax.getXmlHttpRequest = function() {
 	var xmlHttp = false
 	try {
 		xmlHttp = new ActiveXObject("Msxml2.XMLHTTP")
@@ -116,7 +122,7 @@ ajax.getXmlHttpRequest = function() {
 	return xmlHttp
 }
 
-ajax.call = function( method, url, parameters, onResult, options ) {
+jutils.ajax.call = function( method, url, parameters, onResult, options ) {
 	if( ! options )
 		options = new Object()
 
@@ -128,7 +134,7 @@ ajax.call = function( method, url, parameters, onResult, options ) {
 
 	// Block page imediately, otherwise the ajax result may come before the block happens
 	if( options.blockPage )
-		utils.blockPage( "Just a moment, please...", { 'showCloseLink': false } )
+		jutils.misc.blockPage( "Just a moment, please...", { 'showCloseLink': false } )
 
 	if( ! parameters )
 		parameters = {}
@@ -138,7 +144,7 @@ ajax.call = function( method, url, parameters, onResult, options ) {
 		reqParams += key + '=' + escape( parameters[ key ] ) + '&'
 	}
 
-	var xmlHttp = ajax.getXmlHttpRequest()
+	var xmlHttp = jutils.ajax.getXmlHttpRequest()
 
 	xmlHttp.onreadystatechange = function() {
 
@@ -149,7 +155,7 @@ ajax.call = function( method, url, parameters, onResult, options ) {
 			}
 
 			if( options.blockPage && ! options.keepBlocked )
-				utils.unblockPage()
+				jutils.misc.unblockPage()
 		}
 	}
 
@@ -166,23 +172,23 @@ ajax.call = function( method, url, parameters, onResult, options ) {
 	}
 }
 
-ajax.post = function( url, parameters, onResult, options ) {
-	return ajax.call( 'POST', url, parameters, onResult, options )
+jutils.ajax.post = function( url, parameters, onResult, options ) {
+	return jutils.ajax.call( 'POST', url, parameters, onResult, options )
 }
 
-ajax.get = function( url, parameters, onResult, options ) {
-	return ajax.call( 'GET', url, parameters, onResult, options )
+jutils.ajax.get = function( url, parameters, onResult, options ) {
+	return jutils.ajax.call( 'GET', url, parameters, onResult, options )
 }
 
-ajax.formSubmit = function( url, formElement, onResult, options ) {
-	return ajax.post( url, utils.getFormParameters( formElement ), onResult, options )
+jutils.ajax.formSubmit = function( url, formElement, onResult, options ) {
+	return jutils.ajax.post( url, jutils.misc.getFormParameters( formElement ), onResult, options )
 }
 
 // --------------------------------------------------------------------------------------
 // Utils:
 // --------------------------------------------------------------------------------------
 
-utils.parseJson = function( data ) {
+jutils.misc.parseJson = function( data ) {
 	if( 'string' == typeof data ) {
 		return eval( '(' + data + ')' )
 	}
@@ -191,26 +197,26 @@ utils.parseJson = function( data ) {
 }
 
 /** The name of this method should be incrementAndGetMaxZIndex() */
-utils.getAndIncrementMaxZIndex = function() {
-	if( utils.maxZIndex ) {
-		var result = utils.maxZIndex
-		utils.maxZIndex += 1
+jutils.misc.getAndIncrementMaxZIndex = function() {
+	if( jutils.misc.maxZIndex ) {
+		var result = jutils.misc.maxZIndex
+		jutils.misc.maxZIndex += 1
 		return result
 	} else {
-		utils.maxZIndex = 100000
-		dom.walk( function( element ) {
+		jutils.misc.maxZIndex = 100000
+		jutils.dom.walk( function( element ) {
 			if( element.style && element.style.zIndex ) {
 				var currentZIndex = parseInt( element.style.zIndex )
-				if( currentZIndex > utils.maxZIndex )
-					utils.maxZIndex = currentZIndex + 1
+				if( currentZIndex > jutils.misc.maxZIndex )
+					jutils.misc.maxZIndex = currentZIndex + 1
 			}
 		} )
 
-		return utils.getAndIncrementMaxZIndex()
+		return jutils.misc.getAndIncrementMaxZIndex()
 	}
 }
 
-utils.addListener = function( element, event, _function ) {
+jutils.misc.addListener = function( element, event, _function ) {
 	if( element && element.addEventListener ) {
 		element.addEventListener( event, _function, false )
 	} else if( element.attachEvent ) {
@@ -218,7 +224,7 @@ utils.addListener = function( element, event, _function ) {
 	}
 }
 
-utils.removeListener = function( element, event, _function ) {
+jutils.misc.removeListener = function( element, event, _function ) {
 	if( element && element.removeEventListener ) {
 		element.removeEventListener( event, _function, false )
 	} else if( element.detachEvent ) {
@@ -226,7 +232,7 @@ utils.removeListener = function( element, event, _function ) {
 	}
 }
 
-utils.getElementPosition = function( element ) {
+jutils.misc.getElementPosition = function( element ) {
 	var curleft = curtop = 0;
 
 	if( element.offsetParent ) {
@@ -242,35 +248,10 @@ utils.getElementPosition = function( element ) {
 	return null
 }
 
-/**
- * May be used to obtation event position on MouseEvent for browsers that don't have pageX and pageY properties.
- */
-utils.getEventPosition = function( event ) {
-	var x = null
-	var y = null
-
-	if( 'pageX' in event ) {
-		x = event.pageX
-		y = event.pageY
-	}
-	else if( 'clientX' in event ) {
-		if( 'documentElement' in document && 'scrollLeft' in document.documentElement ) {
-			x = event.clientX + document.documentElement.scrollLeft
-			y = event.clientY + document.documentElement.scrollTop
-		}
-		else {
-			x = event.clientX + document.body.scrollLeft
-			y = event.clientY + document.body.scrollTop
-		}
-	}
-
-	return [ x, y ]
-}
-
-utils.initBlockPageDivs = function() {
-	if( ! dom.byId( 'blockDiv' ) ) {
-		var blockPageDiv = dom.createElement( 'div', { 'id': 'blockDiv' }, {}, '' )
-		var blockPageDivContent = dom.createElement( 'div', { 'id': 'blockDivContent' }, {}, '' )
+jutils.misc.initBlockPageDivs = function() {
+	if( ! jutils.dom.byId( 'blockDiv' ) ) {
+		var blockPageDiv = jutils.dom.createElement( 'div', { 'id': 'blockDiv' }, {}, '' )
+		var blockPageDivContent = jutils.dom.createElement( 'div', { 'id': 'blockDivContent' }, {}, '' )
 
 		var body = document.getElementsByTagName( 'body' )[ 0 ]
 		body.appendChild( blockPageDiv )
@@ -292,7 +273,7 @@ utils.initBlockPageDivs = function() {
 
 			this.style.top = '40px'
 
-			this.timeout = setTimeout( 'dom.byId("blockDivContent").checkPosition()', 100 )
+			this.timeout = setTimeout( 'jutils.dom.byId("blockDivContent").checkPosition()', 100 )
 		}
 
 		blockPageDivContent.stopCheckingPosition = function() {
@@ -303,8 +284,8 @@ utils.initBlockPageDivs = function() {
 	}
 }
 
-utils.blockPage = function( content, options ) {
-	utils.initBlockPageDivs()
+jutils.misc.blockPage = function( content, options ) {
+	jutils.misc.initBlockPageDivs()
 
 	if( ! options )
 		options = new Object()
@@ -329,7 +310,7 @@ utils.blockPage = function( content, options ) {
 
 	if( options.closeOnClick ) {
 		popup.register
-		utils.addListener( blockDiv, 'click', utils.unblockPage )
+		jutils.misc.addListener( blockDiv, 'click', jutils.misc.unblockPage )
 	}
 
 	blockDivContent.checkPosition()
@@ -357,15 +338,15 @@ utils.blockPage = function( content, options ) {
 	}
 
 	if( options.showCloseLink ) {
-		content += '<div id="blockDivClose"><a href="javascript:void(utils.unblockPage())"><img src="https://github.com/tkrajina/jutils.js/raw/master/close.png" style="border:none" /></a></div>' 
+		content += '<div id="blockDivClose"><a href="javascript:void(jutils.misc.unblockPage())"><img src="https://github.com/tkrajina/jutils.js/raw/master/close.png" style="border:none" /></a></div>' 
 	}
 
-	dom.removeChildren( blockDivContent )
+	jutils.dom.removeChildren( blockDivContent )
 
 	blockDivContent.innerHTML = '<div class="blockDivMessage">' + content + '</div>'
 
-	blockDiv.style.zIndex = utils.getAndIncrementMaxZIndex()
-	blockDivContent.style.zIndex = utils.getAndIncrementMaxZIndex()
+	blockDiv.style.zIndex = jutils.misc.getAndIncrementMaxZIndex()
+	blockDivContent.style.zIndex = jutils.misc.getAndIncrementMaxZIndex()
 
 	blockDiv.style.display = 'block'
 	blockDivContent.style.display = 'block'
@@ -376,7 +357,7 @@ utils.blockPage = function( content, options ) {
 	blockDivContent.style.border = '1px solid black'
 }
 
-utils.unblockPage = function() {
+jutils.misc.unblockPage = function() {
 	var blockDiv = document.getElementById( "blockDiv" )
 	var blockDivContent = document.getElementById( "blockDivContent" )
 
@@ -386,13 +367,13 @@ utils.unblockPage = function() {
 	blockDivContent.stopCheckingPosition()
 }
 
-utils.redirectIf = function( question, url ) {
+jutils.misc.redirectIf = function( question, url ) {
 	if( confirm( question ) ) {
 		document.location = url
 	}
 }
 
-utils.getFormParameters = function( formElement ) {
+jutils.misc.getFormParameters = function( formElement ) {
 	result = {}
 	for( i in formElement.elements ) {
 		var name = formElement.elements[ i ].name
@@ -404,28 +385,57 @@ utils.getFormParameters = function( formElement ) {
 	return result
 }
 
+// --------------------------------------------------------------------------------------
+// events:
+// --------------------------------------------------------------------------------------
+
 /**
  * Returns the target element for an event.
  */
-utils.getEventTarget = function( event ) {
+jutils.misc.getTarget = function( event ) {
 	if( event.srcElement ) {
 		return event.srcElement
 	}
 	return event.target
 }
 
+/**
+ * May be used to obtain event position on MouseEvent for browsers that don't have pageX and pageY properties.
+ */
+jutils.events.getPosition = function( event ) {
+	var x = null
+	var y = null
+
+	if( 'pageX' in event ) {
+		x = event.pageX
+		y = event.pageY
+	}
+	else if( 'clientX' in event ) {
+		if( 'documentElement' in document && 'scrollLeft' in document.documentElement ) {
+			x = event.clientX + document.documentElement.scrollLeft
+			y = event.clientY + document.documentElement.scrollTop
+		}
+		else {
+			x = event.clientX + document.body.scrollLeft
+			y = event.clientY + document.body.scrollTop
+		}
+	}
+
+	return [ x, y ]
+}
+
 // --------------------------------------------------------------------------------------
 // html:
 // --------------------------------------------------------------------------------------
 
-html.getComputedStyle = function( element, style ) {
+jutils.html.getComputedStyle = function( element, style ) {
 	if( element.currentStyle )
 		return element.currentStyle[ style ]
 	else if( window.getComputedStyle )
 		return document.defaultView.getComputedStyle( element, null ).getPropertyValue( style )
 }
 
-html.hasClass = function( element, className ) {
+jutils.html.hasClass = function( element, className ) {
 	if( ! element.className ) {
 		return false
 	}
@@ -438,7 +448,7 @@ html.hasClass = function( element, className ) {
 	return false
 }
 
-html.addClass = function( element, className ) {
+jutils.html.addClass = function( element, className ) {
 	if( ! element.className ) {
 		element.className = className
 		return
@@ -448,7 +458,7 @@ html.addClass = function( element, className ) {
 	element.className = classes.join( ' ' )
 }
 
-html.removeClass = function( element, className ) {
+jutils.html.removeClass = function( element, className ) {
 	if( ! element.className ) {
 		return
 	}
@@ -462,9 +472,9 @@ html.removeClass = function( element, className ) {
 	element.className = result.join( ' ' )
 }
 
-html.addMouseOverClass = function( element, className ) {
-	utils.addListener( element, 'mouseover', function() { html.addClass( element, className ) } )
-	utils.addListener( element, 'mouseout', function() { html.removeClass( element, className ) } )
+jutils.html.addMouseOverClass = function( element, className ) {
+	jutils.misc.addListener( element, 'mouseover', function() { jutils.html.addClass( element, className ) } )
+	jutils.misc.addListener( element, 'mouseout', function() { jutils.html.removeClass( element, className ) } )
 }
 
 // TODO
@@ -474,47 +484,47 @@ html.addMouseOverClass = function( element, className ) {
 // Kad se otvori bilo koji meni -- ostali se zatvaraju
 
 /** Contains menu items. Every menuItem has a menuBody property. */
-popup.registeredMenus = []
-popup.currentMenuId = 1
+jutils.popup.registeredMenus = []
+jutils.popup.currentMenuId = 1
 
 /**
  * Menu registration. Every menu must have a subelement with class="menuBody" which is a
  * submenu to be shown.
  */
-popup.registerMenu = function( element ) {
+jutils.popup.registerMenu = function( element ) {
 	// Find the first subElement with class 'menuBody':
-	var subMenu = dom.walkSubtree( element, function( subElement ) {
-		if( html.hasClass( subElement, 'menuBody' ) ) {
+	var subMenu = jutils.dom.walkSubtree( element, function( subElement ) {
+		if( jutils.html.hasClass( subElement, 'menuBody' ) ) {
 			return subElement
 		}
 	} )
 
 	// Store submenu, and register it:
 	if( subMenu ) {
-		utils.addListener( element, 'mouseover', popup.showMenuByEvent )
-		utils.addListener( element, 'mouseout', popup.startHidingMenuByEvent )
+		jutils.misc.addListener( element, 'mouseover', jutils.popup.showMenuByEvent )
+		jutils.misc.addListener( element, 'mouseout', jutils.popup.startHidingMenuByEvent )
 
 		element.menuBody = subMenu
-		popup.registeredMenus.push( element )
+		jutils.popup.registeredMenus.push( element )
 	}
 }
 
 /** For private use */
-popup.showMenuByEvent = function( event ) {
-	popup.showMenu( utils.getEventTarget( event ) )
+jutils.popup.showMenuByEvent = function( event ) {
+	jutils.popup.showMenu( jutils.misc.getTarget( event ) )
 }
 
 /** For private use */
-popup.startHidingMenuByEvent = function( event ) {
-	popup.startHidingMenu( utils.getEventTarget( event ) )
+jutils.popup.startHidingMenuByEvent = function( event ) {
+	jutils.popup.startHidingMenu( jutils.misc.getTarget( event ) )
 }
 
 /**
  * Hides all menus. The option exceptMenu is optional. 
  */
-popup.hideAllMenus = function( exceptMenu ) {
-	for( i in popup.registeredMenus ) {
-		var menu = popup.registeredMenus[ i ]
+jutils.popup.hideAllMenus = function( exceptMenu ) {
+	for( i in jutils.popup.registeredMenus ) {
+		var menu = jutils.popup.registeredMenus[ i ]
 		if( ! exceptMenu || menu != exceptMenu ) {
 			menu.menuBody.style.visibility = 'hidden'
 		}
@@ -524,16 +534,16 @@ popup.hideAllMenus = function( exceptMenu ) {
 /**
  * Just shows the menu.
  */
-popup.showMenu = function( element ) {
+jutils.popup.showMenu = function( element ) {
 
 	// remove evenual hiding timeout for this menu
-	if( popup.hideMenuTimeout )
-		clearTimeout( popup.hideMenuTimeout )
+	if( jutils.popup.hideMenuTimeout )
+		clearTimeout( jutils.popup.hideMenuTimeout )
 
 	// This event may occur on the menu or on the menu body or on any of their chidren
-	var menuBody = dom.walkBranch( element, function( el ) {
-		for( i in popup.registeredMenus ) {
-			var menu = popup.registeredMenus[ i ]
+	var menuBody = jutils.dom.walkBranch( element, function( el ) {
+		for( i in jutils.popup.registeredMenus ) {
+			var menu = jutils.popup.registeredMenus[ i ]
 			if( menu.menuBody == el ) {
 				return el
 			}
@@ -544,9 +554,9 @@ popup.showMenu = function( element ) {
 	if( menuBody ) 
 		return
 
-	var menuItem = dom.walkBranch( element, function( el ) {
-		for( i in popup.registeredMenus ) {
-			var menu = popup.registeredMenus[ i ]
+	var menuItem = jutils.dom.walkBranch( element, function( el ) {
+		for( i in jutils.popup.registeredMenus ) {
+			var menu = jutils.popup.registeredMenus[ i ]
 			if( menu == el ) {
 				return el
 			}
@@ -554,25 +564,25 @@ popup.showMenu = function( element ) {
 	} )
 
 	// hide all other menus
-	popup.hideAllMenus()
+	jutils.popup.hideAllMenus()
 
 	// Show and position the menu body:
 
 	menuItem.menuBody.style.visibility = 'visible'
 	menuItem.menuBody.style.left = '0px'
 	menuItem.menuBody.style.top = menuItem.offsetHeight + 1 + 'px'
-	menuItem.menuBody.style.zIndex = utils.getAndIncrementMaxZIndex()
+	menuItem.menuBody.style.zIndex = jutils.misc.getAndIncrementMaxZIndex()
 }
 
 /**
  * Hides the menu .75 seconds from now. Stores the timeout object
  */
-popup.startHidingMenu = function( element ) {
-	popup.hideMenuTimeout = setTimeout( 'popup.hideAllMenus()', 750 );
+jutils.popup.startHidingMenu = function( element ) {
+	jutils.popup.hideMenuTimeout = setTimeout( 'jutils.popup.hideAllMenus()', 750 );
 }
 
-popup.tooltipText = null
-popup.tooltipTimeout = null
+jutils.popup.tooltipText = null
+jutils.popup.tooltipTimeout = null
 
 /**
  * Will register a popup for this element. 
@@ -582,7 +592,7 @@ popup.tooltipTimeout = null
  * If the textOrFunction is a function, the the function will be executed (the only
  * argument is the event) and the result will be filled in the tooltip.
  */
-popup.registerTooltip = function( element, textOrFunction, options ) {
+jutils.popup.registerTooltip = function( element, textOrFunction, options ) {
 
 	if( ! options )
 		options = new Object()
@@ -590,51 +600,51 @@ popup.registerTooltip = function( element, textOrFunction, options ) {
 	if( ! ( 'timeout' in options ) )
 		options.timeout = 500
 
-	popup.initTooltipDiv()
-	utils.addListener( element, 'mousemove', function( event ) {
+	jutils.popup.initTooltipDiv()
+	jutils.misc.addListener( element, 'mousemove', function( event ) {
 
-		popup.hideTooltip()
+		jutils.popup.hideTooltip()
 
-		var clientPosition = utils.getEventPosition( event )
-		var elementPosition = utils.getElementPosition( element )
+		var clientPosition = jutils.events.getPosition( event )
+		var elementPosition = jutils.misc.getElementPosition( element )
 
-		popup.tooltipTextOrFunction = textOrFunction
-		popup.tooltipEvent = event
+		jutils.popup.tooltipTimeoutOrFunction = textOrFunction
+		jutils.popup.tooltipEvent = event
 
 		// Position on screen:
-		popup.tooltipX = clientPosition[ 0 ]
-		popup.tooltipY = clientPosition[ 1 ]
+		jutils.popup.tooltipX = clientPosition[ 0 ]
+		jutils.popup.tooltipY = clientPosition[ 1 ]
 
 		// Position on element:
-		popup.positionX = clientPosition[ 0 ] - elementPosition[ 0 ]
-		popup.positionY = clientPosition[ 1 ] - elementPosition[ 1 ]
+		jutils.popup.positionX = clientPosition[ 0 ] - elementPosition[ 0 ]
+		jutils.popup.positionY = clientPosition[ 1 ] - elementPosition[ 1 ]
 
-		popup.tooltipTimeout = setTimeout( 'popup.showTooltip()', options.timeout )
+		jutils.popup.tooltipTimeout = setTimeout( 'jutils.popup.showTooltip()', options.timeout )
 	} )
-	utils.addListener( element, 'mouseout', function( event ) {
-		popup.hideTooltip()
+	jutils.misc.addListener( element, 'mouseout', function( event ) {
+		jutils.popup.hideTooltip()
 	} )
 }
 
-popup.initTooltipDiv = function() {
-	if( ! dom.byId( 'tooltip' ) ) {
-		var tooltipDiv = dom.createElement( 'div', { 'id': 'tooltip' }, {}, '' )
+jutils.popup.initTooltipDiv = function() {
+	if( ! jutils.dom.byId( 'tooltip' ) ) {
+		var tooltipDiv = jutils.dom.createElement( 'div', { 'id': 'tooltip' }, {}, '' )
 		var body = document.getElementsByTagName( 'body' )[ 0 ]
 		body.appendChild( tooltipDiv )
 	}
 }
 
-popup.showTooltip = function() {
-	var tooltip = dom.byId( 'tooltip' )
+jutils.popup.showTooltip = function() {
+	var tooltip = jutils.dom.byId( 'tooltip' )
 	tooltip.style.visibility = 'visible'
-	tooltip.style.left = popup.tooltipX + 20 + 'px'
-	tooltip.style.top = popup.tooltipY + 'px'
+	tooltip.style.left = jutils.popup.tooltipX + 20 + 'px'
+	tooltip.style.top = jutils.popup.tooltipY + 'px'
 
-	if( popup.tooltipTextOrFunction ) {
-		if( 'string' == typeof popup.tooltipTextOrFunction ) {
-			var text = popup.tooltipTextOrFunction
+	if( jutils.popup.tooltipTimeoutOrFunction ) {
+		if( 'string' == typeof jutils.popup.tooltipTimeoutOrFunction ) {
+			var text = jutils.popup.tooltipTimeoutOrFunction
 		} else {
-			var text = popup.tooltipTextOrFunction( popup.positionX, popup.positionY )
+			var text = jutils.popup.tooltipTimeoutOrFunction( jutils.popup.positionX, jutils.popup.positionY )
 		}
 
 		tooltip.innerHTML = text
@@ -644,26 +654,26 @@ popup.showTooltip = function() {
 	}
 }
 
-popup.hideTooltip = function() {
-	if( popup.tooltipTimeout )
-		clearTimeout( popup.tooltipTimeout )
+jutils.popup.hideTooltip = function() {
+	if( jutils.popup.tooltipTimeout )
+		clearTimeout( jutils.popup.tooltipTimeout )
 
-	var tooltip = dom.byId( 'tooltip' )
+	var tooltip = jutils.dom.byId( 'tooltip' )
 	tooltip.style.visibility = 'hidden'
 }
 
 /** Initializes and returns the top message DIV. */
-popup.getTopMessage = function() {
-	var topMessageDiv = dom.byId( 'topMessage' )
+jutils.popup.getTopMessage = function() {
+	var topMessageDiv = jutils.dom.byId( 'topMessage' )
 
 	if( ! topMessageDiv ) {
-		topMessageDiv = dom.createElement( 'div', { 'id': 'topMessage' }, null, '' )
+		topMessageDiv = jutils.dom.createElement( 'div', { 'id': 'topMessage' }, null, '' )
 		var body = document.getElementsByTagName( 'body' )[ 0 ]
 		body.insertBefore( topMessageDiv, body.childNodes[ 0 ] )
 	}
 
 	// Position on center:
-	var width = html.getComputedStyle( topMessageDiv, 'width' )
+	var width = jutils.html.getComputedStyle( topMessageDiv, 'width' )
 	width = parseInt( width )
 
 	var bodyWidth = document.body.offsetWidth
@@ -673,7 +683,7 @@ popup.getTopMessage = function() {
 	return topMessageDiv
 }
 
-popup.showTopMessage = function( text, options ) {
+jutils.popup.showTopMessage = function( text, options ) {
 
 	if( ! options )
 		options = new Object()
@@ -685,33 +695,117 @@ popup.showTopMessage = function( text, options ) {
 	if( ! ( 'closeOnClick' in options ) )
 		options.closeOnClick = true
 
-	var topMessageDiv = popup.getTopMessage()
+	var topMessageDiv = jutils.popup.getTopMessage()
 
 	topMessageDiv.innerHTML = text
 
 	if( options.autoClose ) {
-		topMessageDiv.timeout = setTimeout( 'dom.byId("topMessage").style.visibility="hidden"', options.autoCloseTimeout )
+		topMessageDiv.timeout = setTimeout( 'jutils.dom.byId("topMessage").style.visibility="hidden"', options.autoCloseTimeout )
 	}
 
-	utils.addListener( topMessageDiv, 'click', function() {
-		var topMessageDiv = popup.getTopMessage()
+	jutils.misc.addListener( topMessageDiv, 'click', function() {
+		var topMessageDiv = jutils.popup.getTopMessage()
 		if( topMessage.closeOnClick ) {
-			popup.hideTopMessage()
+			jutils.popup.hideTopMessage()
 		}
 	} )
 
 	topMessageDiv.closeOnClick = options.closeOnClick
 
 	topMessageDiv.style.visibility = 'visible'
-	topMessageDiv.style.zIndex = utils.getAndIncrementMaxZIndex()
+	topMessageDiv.style.zIndex = jutils.misc.getAndIncrementMaxZIndex()
 }
 
-popup.hideTopMessage = function() {
-	var topMessageDiv = popup.getTopMessage()
+jutils.popup.hideTopMessage = function() {
+	var topMessageDiv = jutils.popup.getTopMessage()
 	if( topMessageDiv ) {
 		topMessageDiv.style.visibility = 'hidden'
 		if( topMessageDiv.timeout ) {
 			clearTimeout( topMessageDiv.timeout )
 		}
+	}
+}
+
+// --------------------------------------------------------------------------------------
+// transformations:
+// --------------------------------------------------------------------------------------
+
+jutils.transformations = new Object()
+
+jutils.transformations.transformationObjects = []
+
+jutils.transformations.transform = function( element, style, to ) {
+	if( ! element.transformationSteps ) {
+		element.transformationSteps = {}
+	}
+	if( ! element.defaultStyles ) {
+		element.defaultStyles = {}
+	}
+
+	var currentStyle = jutils.html.getComputedStyle( element, style )
+
+	if( ! ( style in element.defaultStyles ) ) {
+		element.defaultStyles[ style ] = currentStyle
+	}
+
+	var fromInt = parseInt( ( '' + currentStyle ).replace( /\D+/, '' ) )
+	var metrics = ( '' + currentStyle ).replace( /\d+/, '' )
+
+	jutils.transformations.fillTransformationSteps( element, style, fromInt, parseInt( to ), metrics )
+
+	var found = false
+	for( i in jutils.transformations.transformationObjects ) {
+		if( jutils.transformations.transformationObjects[ i ] == element ) {
+			found = true
+		}
+	}
+	if( ! found ) {
+		jutils.transformations.transformationObjects.push( element )
+	}
+}
+
+jutils.transformations.fillTransformationSteps = function( element, style, from, to, metrics ) {
+	if( ! ( style in element.transformationSteps ) ) {
+		element.transformationSteps[ style ] = []
+	}
+
+	var steps = 100
+	var _from = Math.min( from, to )
+	var _to = Math.max( from, to )
+	var step = ( _to - _from ) / steps
+	for( i = _from; i < _to; i += step ) {
+		element.transformationSteps[ style ].push( i + metrics )
+	}
+}
+
+jutils.transformations.executeTransformationStep = function( element ) {
+
+	if( ! element.transformationSteps ) {
+		return false
+	}
+
+	var executed = false
+
+	for( style in element.transformationSteps ) {
+		if( element.transformationSteps[ style ] ) {
+			var value = element.transformationSteps[ style ].pop()
+			if( value ) {
+				element.style[ style ] = value
+				executed = true
+			}
+		}
+	}
+
+	return executed
+}
+
+jutils.transformations.execute = function() {
+	var executed = false
+	for( i in jutils.transformations.transformationObjects ) {
+		var element = jutils.transformations.transformationObjects[ i ]
+		executed = jutils.transformations.executeTransformationStep( element ) || executed
+	}
+	if( executed ) {
+		setTimeout( 'jutils.transformations.execute()', 20 )
 	}
 }

@@ -725,3 +725,72 @@ jutils.popup.hideTopMessage = function() {
 		}
 	}
 }
+
+// --------------------------------------------------------------------------------------
+// transformations:
+// --------------------------------------------------------------------------------------
+
+jutils.transformations = new Object()
+
+jutils.transformations.transformationObjects = []
+
+jutils.transformations.transform = function( element, style, from, to, steps ) {
+	if( ! steps ) {
+		var steps = 100
+	}
+	if( ! element.transformationSteps ) {
+		element.transformationSteps = {}
+	}
+	if( ! ( style in element.transformationSteps ) ) {
+		element.transformationSteps[ style ] = []
+	}
+
+	var _from = Math.min( from, to )
+	var _to = Math.max( from, to )
+	var step = ( _to - _from ) / steps
+	for( i = _from; i < _to; i += step ) {
+		element.transformationSteps[ style ].push( i + 'px' )
+	}
+
+	var found = false
+	for( i in jutils.transformations.transformationObjects ) {
+		if( jutils.transformations.transformationObjects[ i ] == element ) {
+			found = true
+		}
+	}
+	if( ! found ) {
+		jutils.transformations.transformationObjects.push( element )
+	}
+}
+
+jutils.transformations.executeTransformationStep = function( element ) {
+
+	if( ! element.transformationSteps ) {
+		return false
+	}
+
+	var executed = false
+
+	for( style in element.transformationSteps ) {
+		if( element.transformationSteps[ style ] ) {
+			var value = element.transformationSteps[ style ].pop()
+			if( value ) {
+				element.style[ style ] = value
+				executed = true
+			}
+		}
+	}
+
+	return executed
+}
+
+jutils.transformations.execute = function() {
+	var executed = false
+	for( i in jutils.transformations.transformationObjects ) {
+		var element = jutils.transformations.transformationObjects[ i ]
+		executed = jutils.transformations.executeTransformationStep( element ) || executed
+	}
+	if( executed ) {
+		setTimeout( 'jutils.transformations.execute()', 20 )
+	}
+}

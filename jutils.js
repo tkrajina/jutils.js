@@ -781,6 +781,22 @@ jutils.transformations.transform = function( element, style, to ) {
 	if( ! found ) {
 		jutils.transformations.transformationObjects.push( element )
 	}
+
+	jutils.transformations.execute()
+}
+
+jutils.transformations.reset = function( element, style ) {
+	if( ! element.defaultStyles ) {
+		return
+	}
+
+	if( ! ( style in element.defaultStyles ) ) {
+		return
+	}
+
+	var defaultStyle = element.defaultStyles[ style ]
+
+	jutils.transformations.transform( element, style, defaultStyle )
 }
 
 jutils.transformations.fillTransformationSteps = function( element, style, from, to, metrics ) {
@@ -798,7 +814,6 @@ jutils.transformations.fillTransformationSteps = function( element, style, from,
 }
 
 jutils.transformations.executeTransformationStep = function( element ) {
-
 	if( ! element.transformationSteps ) {
 		return false
 	}

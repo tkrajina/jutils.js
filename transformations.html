@@ -11,25 +11,33 @@
 div.test {
 	border:1px solid black;
 	font-size: 21px;
+	width: 500px;
 }
 </style>
 
 <script>
 
 var init = function() {
-
 	var element = jutils.dom.byId( 'test' )
-	jutils.transformations.transform( element, 'font-size', '200px' )
-	jutils.transformations.transform( element, 'border-top-width', '30px' )
-	jutils.transformations.transform( element, 'border-left-width', '60px' )
+
+	/*
+	alert( jutils.html.getComputedStyle( element, 'font-size' ) )
+	alert( jutils.html.getComputedStyle( element, 'fontSize' ) )
+	*/
+
+	jutils.transformations.transform( element, 'fontSize', '200px' )
+	jutils.transformations.transform( element, 'borderTopWidth', '30px' )
+	jutils.transformations.transform( element, 'borderLeftWidth', '60px' )
 
 	var element = jutils.dom.byId( 'test2' )
-	jutils.transformations.transform( element, 'font-size', 100, 20 )
-
-	jutils.transformations.execute()
+	jutils.transformations.transform( element, 'fontSize', '200px' )
+	/*
+	*/
 }
 
 </script>
+
+<a href='javascript:void(jutils.transformations.reset(jutils.dom.byId("test"), "font-size"))'>Reset</a>
 
 </head>
 <body onload="init()">

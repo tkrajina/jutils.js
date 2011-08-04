@@ -805,10 +805,8 @@ jutils.transformations.fillTransformationSteps = function( element, style, from,
 	}
 
 	var steps = 100
-	var _from = Math.min( from, to )
-	var _to = Math.max( from, to )
-	var step = ( _to - _from ) / steps
-	for( i = _from; i < _to; i += step ) {
+	var step = ( to - from ) / steps
+	for( i = from; i < to; i += step ) {
 		element.transformationSteps[ style ].push( i + metrics )
 	}
 }
@@ -822,7 +820,7 @@ jutils.transformations.executeTransformationStep = function( element ) {
 
 	for( style in element.transformationSteps ) {
 		if( element.transformationSteps[ style ] ) {
-			var value = element.transformationSteps[ style ].pop()
+			var value = element.transformationSteps[ style ].shift()
 			if( value ) {
 				element.style[ style ] = value
 				executed = true

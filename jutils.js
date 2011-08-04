@@ -429,10 +429,29 @@ jutils.events.getPosition = function( event ) {
 // --------------------------------------------------------------------------------------
 
 jutils.html.getComputedStyle = function( element, style ) {
-	if( element.currentStyle )
-		return element.currentStyle[ style ]
-	else if( window.getComputedStyle )
-		return document.defaultView.getComputedStyle( element, null ).getPropertyValue( style )
+	if( style.indexOf( '-' ) >= 0 ) {
+		// if 'font-size' we'll try fontSize also:
+		style2 = style.replace( /(\-)([\w])/g , function( m, p1, p2 ){ return p2.toUpperCase(); } )
+	} else {
+		// if 'font-size' we'll try fontSize also:
+		style2 = style.replace( /([A-Z])/g , function( m, p1 ){ return '-' + p1.toLowerCase(); } )
+	}
+	if( element.currentStyle ) {
+		var result = element.currentStyle[ style ]
+
+		if( result )
+			return result
+		else
+			return element.currentStyle[ style2 ]
+	}
+	else if( window.getComputedStyle ) {
+		var result = document.defaultView.getComputedStyle( element, null ).getPropertyValue( style )
+
+		if( result )
+			return result
+		else
+			return document.defaultView.getComputedStyle( element, null ).getPropertyValue( style2 )
+	}
 }
 
 jutils.html.hasClass = function( element, className ) {

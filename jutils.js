@@ -749,8 +749,6 @@ jutils.popup.hideTopMessage = function() {
 // transformations:
 // --------------------------------------------------------------------------------------
 
-jutils.transformations = new Object()
-
 jutils.transformations.transformationObjects = []
 
 jutils.transformations.transform = function( element, style, to ) {
@@ -782,7 +780,9 @@ jutils.transformations.transform = function( element, style, to ) {
 		jutils.transformations.transformationObjects.push( element )
 	}
 
-	jutils.transformations.execute()
+	if( ! jutils.transformations.executing ) {
+		jutils.transformations.execute()
+	}
 }
 
 jutils.transformations.reset = function( element, style ) {
@@ -800,14 +800,12 @@ jutils.transformations.reset = function( element, style ) {
 }
 
 jutils.transformations.fillTransformationSteps = function( element, style, from, to, metrics ) {
-	if( ! ( style in element.transformationSteps ) ) {
-		element.transformationSteps[ style ] = []
-	}
+	element.transformationSteps[ style ] = []
 
 	var steps = 100
 	var step = ( to - from ) / steps
-	for( i = from; i < to; i += step ) {
-		element.transformationSteps[ style ].push( i + metrics )
+	for( i = 0; i < steps; i++ ) {
+		element.transformationSteps[ style ].push( ( from + i * step ) + metrics )
 	}
 }
 
@@ -832,6 +830,7 @@ jutils.transformations.executeTransformationStep = function( element ) {
 }
 
 jutils.transformations.execute = function() {
+	jutils.transformations.executing = true
 	var executed = false
 	for( i in jutils.transformations.transformationObjects ) {
 		var element = jutils.transformations.transformationObjects[ i ]
@@ -839,6 +838,8 @@ jutils.transformations.execute = function() {
 	}
 	if( executed ) {
 		setTimeout( 'jutils.transformations.execute()', 20 )
+	} else {
+		jutils.transformations.executing = false
 	}
 }
 

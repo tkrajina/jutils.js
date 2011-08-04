@@ -430,10 +430,10 @@ jutils.events.getPosition = function( event ) {
 
 jutils.html.getComputedStyle = function( element, style ) {
 	if( style.indexOf( '-' ) >= 0 ) {
-		// if 'font-size' we'll try fontSize also:
+		// if 'font-size' we'll try 'fontSize' also:
 		style2 = style.replace( /(\-)([\w])/g , function( m, p1, p2 ){ return p2.toUpperCase(); } )
 	} else {
-		// if 'font-size' we'll try fontSize also:
+		// if 'fontSize' we'll try 'font-size' also:
 		style2 = style.replace( /([A-Z])/g , function( m, p1 ){ return '-' + p1.toLowerCase(); } )
 	}
 	if( element.currentStyle ) {

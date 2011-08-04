@@ -725,3 +725,66 @@ jutils.popup.hideTopMessage = function() {
 		}
 	}
 }
+
+// --------------------------------------------------------------------------------------
+// colors
+// --------------------------------------------------------------------------------------
+
+jutils.colors.getRGB = function( color ) {
+	if( ! color ) return null
+	if( color[ 0 ] == '#' && ( color.length == 7 || color.length == 4 ) ) {
+		var r = parseInt( color.length == 7 ? color.substring( 1, 3 ) : color.substring( 1, 2 ), 16 )
+		var g = parseInt( color.length == 7 ? color.substring( 3, 5 ) : color.substring( 2, 3 ), 16 )
+		var b = parseInt( color.length == 7 ? color.substring( 5, 7 ) : color.substring( 3, 4 ), 16 )
+		return [ r, g, b ]
+	} else {
+		// standard format: rgb( 255, 255, 255 )
+		color = color.replace( /[rgb\(\)\s]/g, '' )
+		var parts = color.split( /,/ )
+		if( parts.length == 3 ) {
+			var r = parseInt( parts[ 0 ] )
+			var g = parseInt( parts[ 1 ] )
+			var b = parseInt( parts[ 2 ] )
+			return [ r, g, b ]
+		}
+	}
+	return null
+}
+
+jutils.colors.getColorString = function( r, g, b ) {
+	return 'rgb(' + r + ',' + g + ',' + b + ')'
+}
+
+jutils.colors.changeColor = function( colorString, r, g, b ) {
+	var rgb = jutils.colors.getRGB( colorString )
+	if( ! rgb ) {
+		return null
+	}
+
+	rgb[ 0 ] = rgb[ 0 ] + r
+	rgb[ 1 ] = rgb[ 1 ] + g
+	rgb[ 2 ] = rgb[ 2 ] + b
+
+	if( rgb[ 0 ] < 0 ) rgb[ 0 ] = 0
+	if( rgb[ 1 ] < 0 ) rgb[ 1 ] = 0
+	if( rgb[ 2 ] < 0 ) rgb[ 2 ] = 0
+
+	if( rgb[ 0 ] > 255 ) rgb[ 0 ] = 255
+	if( rgb[ 1 ] > 255 ) rgb[ 1 ] = 255
+	if( rgb[ 2 ] > 255 ) rgb[ 2 ] = 255
+
+	return jutils.colors.getColorString( rgb[ 0 ], rgb[ 1 ], rgb[ 2 ] )
+}
+
+jutils.colors.brighter = function( color, n ) {
+	if( ! n ) n = 16
+
+	return jutils.colors.changeColor( color, 16, 16, 16 )
+}
+
+jutils.colors.darker = function( color, n ) {
+	if( ! n ) n = 16
+
+	return jutils.colors.changeColor( color, -16, -16, -16 )
+}
+

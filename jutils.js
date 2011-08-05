@@ -751,6 +751,12 @@ jutils.popup.hideTopMessage = function() {
 
 jutils.transformations.transformationObjects = []
 
+/**
+ * Transform element's current style to another value. Not that if the style was given
+ * with pixels -- the new value must, also, be given in pixels.
+ *
+ * To return the element to its original style -- use reset()
+ */
 jutils.transformations.transform = function( element, style, to ) {
 	if( ! element.transformationSteps ) {
 		element.transformationSteps = {}
@@ -808,12 +814,18 @@ jutils.transformations.reset = function( element, style ) {
 	jutils.transformations.transform( element, style, defaultStyle )
 }
 
+/**
+ * For internal use. Will fill element.transformationSteps[ styleName ] with all the
+ * partial values to be used in transformations. If another transformation occurs this
+ * array vill be deleted and filled from start.
+ */
 jutils.transformations.fillTransformationSteps = function( element, style, from, to ) {
 	element.transformationSteps[ style ] = []
 
 	var steps = 100
 
 	if( from.match( /^\d+\w+$/ ) ) {
+		// for example 10px or 2em
 		var metrics = from.replace( /\d+/g, '' )
 		_from = parseInt( from )
 		_to = parseInt( to )
@@ -822,6 +834,7 @@ jutils.transformations.fillTransformationSteps = function( element, style, from,
 			element.transformationSteps[ style ].push( ( _from + i * step ) + metrics )
 		}
 	} else if( from.match( /rgb.*/ ) || from[ 0 ] == '#' ) {
+		// color:
 		var fromRgb = jutils.colors.getRGB( from )
 		var toRgb = jutils.colors.getRGB( to )
 		if( fromRgb && toRgb ) {
@@ -836,6 +849,11 @@ jutils.transformations.fillTransformationSteps = function( element, style, from,
 	}
 }
 
+/**
+ * Execute single transformation step for single element. Not that any element may
+ * have transformations steps for multiple of his styles. This method will execute
+ * *one* transformations for every style. Internal use.
+ */
 jutils.transformations.executeTransformationStep = function( element ) {
 	if( ! element.transformationSteps ) {
 		return false
@@ -856,6 +874,10 @@ jutils.transformations.executeTransformationStep = function( element ) {
 	return executed
 }
 
+/**
+ * Execute current trasformations. Do not call it directly. It will be called in
+ * transform() and reset() implicitly.
+ */
 jutils.transformations.execute = function() {
 	jutils.transformations.executing = true
 	var executed = false

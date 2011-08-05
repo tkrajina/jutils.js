@@ -782,7 +782,19 @@ jutils.transformations.transform = function( element, style, to ) {
 	}
 }
 
+/**
+ * Transform object to its default appearance. If style is not given -- reset for all
+ * transformed styles.
+ */
 jutils.transformations.reset = function( element, style ) {
+
+	if( ! style && element.defaultStyles ) {
+		for( currentStyle in element.defaultStyles ) {
+			jutils.transformations.reset( element, currentStyle )
+		}
+		return
+	}
+
 	if( ! element.defaultStyles ) {
 		return
 	}

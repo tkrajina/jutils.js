@@ -765,10 +765,7 @@ jutils.transformations.transform = function( element, style, to ) {
 		element.defaultStyles[ style ] = currentStyle
 	}
 
-	var fromInt = parseInt( ( '' + currentStyle ).replace( /\D+/, '' ) )
-	var metrics = ( '' + currentStyle ).replace( /\d+/, '' )
-
-	jutils.transformations.fillTransformationSteps( element, style, fromInt, parseInt( to ), metrics )
+	jutils.transformations.fillTransformationSteps( element, style, currentStyle, to )
 
 	var found = false
 	for( i in jutils.transformations.transformationObjects ) {
@@ -799,13 +796,31 @@ jutils.transformations.reset = function( element, style ) {
 	jutils.transformations.transform( element, style, defaultStyle )
 }
 
-jutils.transformations.fillTransformationSteps = function( element, style, from, to, metrics ) {
+jutils.transformations.fillTransformationSteps = function( element, style, from, to ) {
 	element.transformationSteps[ style ] = []
 
 	var steps = 100
-	var step = ( to - from ) / steps
-	for( i = 0; i < steps; i++ ) {
-		element.transformationSteps[ style ].push( ( from + i * step ) + metrics )
+
+	if( from.match( /^\d+\w+$/ ) ) {
+		var metrics = from.replace( /\d+/g, '' )
+		_from = parseInt( from )
+		_to = parseInt( to )
+		var step = ( _to - _from ) / steps
+		for( i = 0; i < steps; i++ ) {
+			element.transformationSteps[ style ].push( ( _from + i * step ) + metrics )
+		}
+	} else if( from.match( /rgb.*/ ) || from[ 0 ] == '#' ) {
+		var fromRgb = jutils.colors.getRGB( from )
+		var toRgb = jutils.colors.getRGB( to )
+		if( fromRgb && toRgb ) {
+			for( i = 0; i < steps; i++ ) {
+				var r = Math.floor( fromRgb[ 0 ] + i * ( toRgb[ 0 ] - fromRgb[ 0 ] ) / steps )
+				var g = Math.floor( fromRgb[ 1 ] + i * ( toRgb[ 1 ] - fromRgb[ 1 ] ) / steps )
+				var b = Math.floor( fromRgb[ 2 ] + i * ( toRgb[ 2 ] - fromRgb[ 2 ] ) / steps )
+				var newColor = jutils.colors.getColorString( r, g, b )
+				element.transformationSteps[ style ].push( newColor )
+			}
+		}
 	}
 }
 

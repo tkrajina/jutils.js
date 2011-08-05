@@ -12,6 +12,7 @@ div.test {
 	border:1px solid black;
 	font-size: 21px;
 	width: 500px;
+	background-color: #ffffff;
 }
 </style>
 
@@ -28,6 +29,8 @@ var init = function() {
 	jutils.transformations.transform( element, 'fontSize', '200px' )
 	jutils.transformations.transform( element, 'borderTopWidth', '30px' )
 	jutils.transformations.transform( element, 'borderLeftWidth', '60px' )
+	jutils.transformations.transform( element, 'borderLeftWidth', '60px' )
+	jutils.transformations.transform( element, 'backgroundColor', '#0000ff' )
 
 	var element = jutils.dom.byId( 'test2' )
 	jutils.transformations.transform( element, 'fontSize', '200px' )

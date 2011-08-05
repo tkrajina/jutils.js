@@ -1,0 +1,1 @@
+- firefox -- reset doesn't reset the font size

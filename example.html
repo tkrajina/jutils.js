@@ -20,6 +20,18 @@ var init = function() {
 		}
 	} )
 
+	// Init onmouse over effects for elements with class 'row'
+	jutils.dom.walk( function( element ) {
+		if( jutils.html.hasClass( element, 'transformationRow' ) ) {
+			jutils.misc.addListener( element, 'mouseover', function() {
+				jutils.transformations.transform( element, 'backgroundColor', '#00ff00' )
+			} )
+			jutils.misc.addListener( element, 'mouseout', function() {
+				jutils.transformations.reset( element )
+			} )
+		}
+	} )
+
 	// Init menus:
 	jutils.dom.walk( function( element ) {
 		if( jutils.html.hasClass( element, 'menuItem' ) ) {
@@ -36,6 +48,14 @@ var init = function() {
 		}
 	} )
 
+	var title = jutils.dom.byId( 'title' )
+	jutils.transformations.transform( title, 'fontSize', '30px' )
+	jutils.transformations.transform( title, 'borderWidth', '5px' )
+	jutils.transformations.transform( title, 'borderTopWidth', '15px' )
+	jutils.transformations.transform( title, 'borderTopColor', '#bbbbbb' )
+	jutils.transformations.transform( title, 'borderBottomWidth', '15px' )
+	jutils.transformations.transform( title, 'borderBottomColor', '#bbbbbb' )
+
 }
 
 // Method to be called on ajax request
@@ -50,8 +70,6 @@ var onAjax = function( data ) {
 </head>
 <body onload="init()">
 
-<h1>Work in progress</h1>
-
 <div id="menu1" class="menuItem" style="float:left;"><a href="#">Menu 1</a><div id="a" class="menuBody"><a href="http://www.google.com">Google</a><br>Menu content</div></div>
 <div id="menu2" class="menuItem" style="float:left;">Menu 2<div id="b" class="menuBody">Menu contents<br>Menu content</div></div>
 <div id="menu3" class="menuItem" style="float:left;">Menu 3<div id="c" class="menuBody">Menu contents<br>Menu content</div></div>
@@ -63,10 +81,18 @@ var onAjax = function( data ) {
 	<a href='javascript:void(jutils.popup.showTopMessage("Test"))'>Show top message</a>
 	<a href='javascript:void(jutils.popup.hideTopMessage())'>Hide top message</a>
 </div>
-<div class="row">Mouseover effect</div>
-<div class="row">Mouseover effect</div>
-<div class="row">Mouseover effect</div>
-<div class="row">Mouseover effect</div>
+<div class="transformationRow">Transformation effect on mouseover</div>
+<div class="transformationRow">Transformation effect on mouseover</div>
+<div class="transformationRow">Transformation effect on mouseover</div>
+<div class="transformationRow">Transformation effect on mouseover</div>
+<div class="transformationRow">Transformation effect on mouseover</div>
+
+<div id="title" style="border:1px solid black;font-size:10px;margin:20px;">Jutils example</div>
+
+<div class="row">Mouseover with change class</div>
+<div class="row">Mouseover with change class</div>
+<div class="row">Mouseover with change class</div>
+<div class="row">Mouseover with change class</div>
 
 <div class="row">
 	Click <a href="javascript:void(jutils.ajax.get('example.json', null, onAjax))">here for AJAX call</a>.
@@ -82,7 +108,6 @@ var onAjax = function( data ) {
 <div id="withTooltip" style="width:200px;height:200px;border:1px solid black">
 	Mouseover for tooltip
 </div>
-
 
 <div id="log"></div>
 

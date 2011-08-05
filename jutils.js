@@ -309,7 +309,6 @@ jutils.misc.blockPage = function( content, options ) {
 	var blockDivContent = document.getElementById( "blockDivContent" )
 
 	if( options.closeOnClick ) {
-		popup.register
 		jutils.misc.addListener( blockDiv, 'click', jutils.misc.unblockPage )
 	}
 
@@ -756,6 +755,9 @@ jutils.transformations.transformationObjects = []
  * with pixels -- the new value must, also, be given in pixels.
  *
  * To return the element to its original style -- use reset()
+ *
+ * In order for this method to work correctly the style of the element must be defined
+ * (be it inline or with CSS).
  */
 jutils.transformations.transform = function( element, style, to ) {
 	if( ! element.transformationSteps ) {
@@ -766,6 +768,10 @@ jutils.transformations.transform = function( element, style, to ) {
 	}
 
 	var currentStyle = jutils.html.getComputedStyle( element, style )
+
+	if( ! currentStyle ) {
+		return
+	}
 
 	if( ! ( style in element.defaultStyles ) ) {
 		element.defaultStyles[ style ] = currentStyle
@@ -819,10 +825,12 @@ jutils.transformations.reset = function( element, style ) {
  * partial values to be used in transformations. If another transformation occurs this
  * array vill be deleted and filled from start.
  */
-jutils.transformations.fillTransformationSteps = function( element, style, from, to ) {
+jutils.transformations.fillTransformationSteps = function( element, style, from, to, steps ) {
 	element.transformationSteps[ style ] = []
 
-	var steps = 100
+	if( ! steps ) {
+		var steps = 40
+	}
 
 	if( from.match( /^\d+\w+$/ ) ) {
 		// for example 10px or 2em

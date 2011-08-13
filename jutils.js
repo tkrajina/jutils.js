@@ -248,6 +248,17 @@ jutils.misc.getElementPosition = function( element ) {
 	return null
 }
 
+jutils.misc.getElementSize = function( element ) {
+	if( ! element ) {
+		return null
+	}
+
+	var width = jutils.html.getComputedStyle( element, 'width' )
+	var height = jutils.html.getComputedStyle( element, 'height' )
+
+	return [ width, height ]
+}
+
 jutils.misc.initBlockPageDivs = function() {
 	if( ! jutils.dom.byId( 'blockDiv' ) ) {
 		var blockPageDiv = jutils.dom.createElement( 'div', { 'id': 'blockDiv' }, {}, '' )
@@ -553,7 +564,6 @@ jutils.popup.hideAllMenus = function( exceptMenu ) {
  * Just shows the menu.
  */
 jutils.popup.showMenu = function( element ) {
-
 	// remove evenual hiding timeout for this menu
 	if( jutils.popup.hideMenuTimeout )
 		clearTimeout( jutils.popup.hideMenuTimeout )
@@ -583,11 +593,23 @@ jutils.popup.showMenu = function( element ) {
 
 	// hide all other menus
 	jutils.popup.hideAllMenus()
+	var position = jutils.misc.getElementPosition( menuItem.menuBody )
+	var size = jutils.misc.getElementSize( menuItem.menuBody )
+
+	var left = '0px'
+	if( position && size ) {
+		var positionX = parseInt( position[ 0 ] )
+		var width = parseInt( size[ 0 ] )
+		if( positionX + width > document.body.offsetWidth ) {
+			left = ( document.body.offsetWidth - ( positionX + width  ) ) - 10 + 'px'
+		}
+	}
+
+	// Check if the right side of the menu is out of the visible screen:
 
 	// Show and position the menu body:
-
 	menuItem.menuBody.style.visibility = 'visible'
-	menuItem.menuBody.style.left = '0px'
+	menuItem.menuBody.style.left = left
 	menuItem.menuBody.style.top = menuItem.offsetHeight + 1 + 'px'
 	menuItem.menuBody.style.zIndex = jutils.misc.getAndIncrementMaxZIndex()
 }
@@ -611,7 +633,6 @@ jutils.popup.tooltipTimeout = null
  * argument is the event) and the result will be filled in the tooltip.
  */
 jutils.popup.registerTooltip = function( element, textOrFunction, options ) {
-
 	if( ! options )
 		options = new Object()
 

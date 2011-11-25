@@ -1,6 +1,7 @@
 0.3-beta
 	- Transformations
 	- colors
+	- toggleClass()
 0.2.1
 2011-07-17  - Top message
 0.2

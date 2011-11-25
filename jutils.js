@@ -490,6 +490,17 @@ jutils.html.removeClass = function( element, className ) {
 	element.className = result.join( ' ' )
 }
 
+jutils.html.toggleClass = function( element, className ) {
+	if( ! element || ! className )
+		return
+
+	if( jutils.html.hasClass( element, className ) ) {
+		jutils.html.removeClass( element, className )
+	} else {
+		jutils.html.addClass( element, className )
+	}
+}
+
 jutils.html.addMouseOverClass = function( element, className ) {
 	jutils.misc.addListener( element, 'mouseover', function() { jutils.html.addClass( element, className ) } )
 	jutils.misc.addListener( element, 'mouseout', function() { jutils.html.removeClass( element, className ) } )

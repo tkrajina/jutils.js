@@ -454,9 +454,12 @@ jutils.html.getComputedStyle = function( element, style ) {
 }
 
 jutils.html.hasClass = function( element, className ) {
-	if( ! element.className ) {
+	if( ! element.className )
 		return false
-	}
+
+	if( element.className && ! element.className.split )
+		return false
+
 	var classes = element.className.split( /\s+/ )
 	for( i in classes ) {
 		if( className == classes[ i ] ) {
@@ -467,10 +470,14 @@ jutils.html.hasClass = function( element, className ) {
 }
 
 jutils.html.addClass = function( element, className ) {
+	if( element.className && ! element.className.split )
+		return false
+
 	if( ! element.className ) {
 		element.className = className
 		return
 	}
+
 	var classes = element.className.split( /\s+/ )
 	classes.push( className )
 	element.className = classes.join( ' ' )
@@ -480,6 +487,10 @@ jutils.html.removeClass = function( element, className ) {
 	if( ! element.className ) {
 		return
 	}
+
+	if( element.className && ! element.className.split )
+		return false
+
 	var classes = element.className.split( /\s+/ )
 	var result = new Array()
 	for( i in classes ) {

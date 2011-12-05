@@ -43,7 +43,7 @@ var init = function() {
 	jutils.dom.walk( function( element ) {
 		if( element.id && element.id == 'withTooltip' ) {
 			jutils.popup.registerTooltip( element, function( x, y ) {
-				return 'Tooltip for event:' + event + ' on ' + x + ',' + y
+				return 'Tooltip for event on ' + x + ',' + y
 			} )
 		}
 	} )

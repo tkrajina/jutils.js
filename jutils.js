@@ -13,6 +13,7 @@ jutils.elemens = new Object()
 jutils.events = new Object()
 jutils.transformations = new Object()
 jutils.colors = new Object()
+jutils.log = new Object()
 
 // --------------------------------------------------------------------------------------
 // dom
@@ -151,7 +152,11 @@ jutils.ajax.call = function( method, url, parameters, onResult, options ) {
 		if( xmlHttp.readyState == 4 ) {
 
 			if( onResult ) {
-				onResult( xmlHttp.responseText )
+				try {
+					onResult( xmlHttp.responseText )
+				} catch( e ) {
+					jutils.log.error( 'Error executing AJAX callback function for:' + xmlHttp.responseText )
+				}
 			}
 
 			if( options.blockPage && ! options.keepBlocked )
@@ -160,13 +165,14 @@ jutils.ajax.call = function( method, url, parameters, onResult, options ) {
 	}
 
 	if( method == 'POST' ) {
+		jutils.log.info( 'AJAX POST: ' + url )
 		xmlHttp.open( 'POST', url );
 		xmlHttp.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 		xmlHttp.send( reqParams );
 	} else {
 		if( reqParams )
 			url += '?' + reqParams
-
+		jutils.log.info( 'AJAX GET: ' + url )
 		xmlHttp.open( 'GET', url )
 		xmlHttp.send( null )
 	}
@@ -190,7 +196,12 @@ jutils.ajax.formSubmit = function( url, formElement, onResult, options ) {
 
 jutils.misc.parseJson = function( data ) {
 	if( 'string' == typeof data ) {
-		return eval( '(' + data + ')' )
+		try {
+			return eval( '(' + data + ')' )
+		} catch( e ) {
+			jutils.log.error( 'Error parsing JSON: "' + data + '", e = ' + e )
+			return null
+		}
 	}
 
 	return data
@@ -984,3 +995,36 @@ jutils.colors.darker = function( color, n ) {
 	return jutils.colors.changeColor( color, -16, -16, -16 )
 }
 
+// --------------------------------------------------------------------------------------
+// log
+// --------------------------------------------------------------------------------------
+
+jutils.log.messages = []
+
+jutils.log.log = function( message ) {
+	if( console )
+		console.log( message )
+	else
+		log.messages.push( '[log] ' + message )
+}
+
+jutils.log.error = function( message ) {
+	if( console )
+		console.error( message )
+	else
+		log.messages.push( '[error]' + message )
+}
+
+jutils.log.warn = function( message ) {
+	if( console )
+		console.warn( message )
+	else
+		log.messages.push( '[warn]' + message )
+}
+
+jutils.log.info = function( message ) {
+	if( console )
+		console.info( message )
+	else
+		log.messages.push( '[info] ' + message )
+}

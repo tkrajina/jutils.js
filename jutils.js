@@ -399,6 +399,19 @@ jutils.misc.getFormParameters = function( formElement ) {
 // events:
 // --------------------------------------------------------------------------------------
 
+jutils.misc.onBeforeUnload = function(message) {
+    window.onbeforeunload = function (e) {
+        var e = e || window.event
+
+        // For IE<8 and Firefox prior to version 4
+        if(e)
+            e.returnValue = message
+
+        // For Chrome, Safari, IE8+ and Opera 12+
+        return message
+    }
+}
+
 /**
  * Returns the target element for an event.
  */

@@ -399,9 +399,54 @@ jutils.misc.getFormParameters = function( formElement ) {
 // events:
 // --------------------------------------------------------------------------------------
 
-jutils.misc.onBeforeUnload = function(message) {
-    window.onbeforeunload = function (e) {
+/**
+ * onBeforeUnloadFunction is a function or string that must return a string if a user
+ * needs to be alerted before leaving the page.
+ *
+ * Options:
+ * exceptUrls: list of regexp of links that must not be part of this onBeforeUnload action
+ */
+jutils.misc.onBeforeUnload = function(onBeforeUnload, options) {
+	if( ! options )
+		options = new Object()
+
+	if( ! ('exceptUrls' in options))
+		options.exceptUrls = []
+
+    // Store here the last url clicked
+    document.lastLinkUrlClicked = null
+
+    jutils.dom.walk(function(element) {
+        if(element.tagName == 'A') {
+            jutils.misc.addListener(
+                    element,
+                    'click',
+                    function() {
+                        document.lastLinkUrlClicked = '' + element.href
+                    })
+        }
+    })
+
+    window.onbeforeunload = function(e) {
         var e = e || window.event
+
+        //message = ''
+        if(document.lastLinkUrlClicked) {
+            for(i in options.exceptUrls) {
+                var exceptUrl = options.exceptUrls[i]
+                //message += document.lastLinkUrlClicked + " " + exceptUrl + "->" + (exceptUrl && document.lastLinkUrlClicked.match(exceptUrl)) + "\n"
+                if(exceptUrl && document.lastLinkUrlClicked.match(exceptUrl)) {
+                    return
+                }
+            }
+        }
+
+        //return message
+
+        if('string' == typeof onBeforeUnload)
+            var message = onBeforeUnload
+        else
+            var message = onBeforeUnload(e)
 
         // For IE<8 and Firefox prior to version 4
         if(e)

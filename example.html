@@ -56,6 +56,13 @@ var init = function() {
 	jutils.transformations.transform( title, 'borderBottomWidth', '15px' )
 	jutils.transformations.transform( title, 'borderBottomColor', '#bbbbbb' )
 
+    // Alert if the user wants to leve this page (shown only if the url clicked does not contain "google":
+    jutils.misc.onBeforeUnload(
+            'Leave this page?',
+            {
+                'exceptUrls': [/.*google.*/]
+            })
+
 }
 
 // Method to be called on ajax request
@@ -108,6 +115,11 @@ var onAjax = function( data ) {
 <div id="withTooltip" style="width:200px;height:200px;border:1px solid black">
 	Mouseover for tooltip
 </div>
+
+<p>
+    <a href='http://www.google.com'>Click here to exit without onBeforeUnload alert</a>
+    <a href='http://www.yahoo.com'>Click here to exit with onBeforeUnload alert</a>
+</p>
 
 <div id="log"></div>
 
